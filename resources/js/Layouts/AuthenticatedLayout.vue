@@ -1,14 +1,3 @@
-<script setup>
-import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
-
-const showingNavigationDropdown = ref(false);
-</script>
 
 <template>
     <div>
@@ -148,13 +137,13 @@ const showingNavigationDropdown = ref(false);
                         <ul class="menu p-4 w-80 min-h-full bg-white shadow text-neutral-900">
                         <!-- Sidebar content here -->
                             <li>
-                                <Link :href="route('panel.dashboard')">
+                                <Link :href="route('client.dashboard')">
                                     Dashboard
                                 </Link>
                             </li>
                             <li>
-                                <Link :href="route('panel.user.index')">
-                                    Manajemen User
+                                <Link :href="route('client.form.index')">
+                                    Manajemen Formulir
                                 </Link>
                             </li>
                         
@@ -164,9 +153,56 @@ const showingNavigationDropdown = ref(false);
                 </div>
                 
                 <div class="w-full">
+
+                    <div class="container p-6 absolute w-fit right-0"  v-if="$page.props.errors && $page.props.errors.message">
+                        <div role="alert" class="alert shadow-lg bg-white animate-shake">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <h3 class="font-bold">Tidak ada layanan!</h3>
+                            <div class="text-xs">{{ $page.props.errors.message }}</div>
+                        </div>
+                    </div>
+                    </div>
                     <slot />
                 </div>
             </main>
         </div>
     </div>
 </template>
+
+<script>
+import { ref } from 'vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
+import NavLink from '@/Components/NavLink.vue';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { Link } from '@inertiajs/vue3';
+export default {
+    components:{
+        ApplicationLogo,
+        Dropdown,
+        DropdownLink,
+        NavLink,
+        ResponsiveNavLink,
+        Link,
+    },
+    data() {
+        return {
+            showingNavigationDropdown: false
+        }
+    },
+    props:{
+        message:String
+    },
+    mounted() {
+        if (this.$page.props.errors) {
+            setTimeout(() => {
+                this.$page.props.errors = null
+            }, 6000);
+        }
+    },
+    
+    
+}
+</script>

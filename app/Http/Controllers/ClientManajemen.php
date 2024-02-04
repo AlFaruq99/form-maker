@@ -33,7 +33,10 @@ class ClientManajemen extends Controller
                     $subBilling->where('expired_at','>',date('Y-m-d'));
                 });
             }else if($status == 'inactive'){
-                $sub->whereDoesntHave('subscription');
+                $sub->whereDoesntHave('subscription')
+                ->orWhereHas('subscription',function($sub) {
+                    $sub->where('expired_at','<',date('Y-m-d'));
+                });
             }
         })
         ->with('subscription')

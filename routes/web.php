@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientManajemen;
+use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\UserLevelMiddlerware;
 use Illuminate\Foundation\Application;
@@ -64,6 +65,19 @@ Route::prefix('client')
     Route::get('/dashboard',function(){
         return Inertia::render('Client/Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
+
+    Route::prefix('form')
+    ->name('form.')
+    ->controller(FormulirController::class)
+    ->middleware('subscribtion:active')
+    ->group(function(){
+        Route::get('index','index')->name('index');
+        Route::get('create_form','CreateForm')->name('CreateForm');
+        Route::get('formulir_data','FormulirData')->name('FormulirData');
+        Route::get('view_form/{form_id}','ViewForm')->name('ViewForm');
+
+        Route::post('create','Create')->name('create');
+    });
 });
 
 Route::middleware('auth')->group(function () {
