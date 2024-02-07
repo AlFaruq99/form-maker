@@ -24,6 +24,9 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('authenticate'), {
+        headers:{
+            'ngrok-skip-browser-warning' : true
+        },
         onFinish: () => form.reset('password'),
     });
 };
