@@ -47,10 +47,10 @@
                                                 <Link :href="item?.url">{{ item?.url }}</Link>
                                             </td>
                                             <td>
-                                                <Link :href="route('panel.user.userActivation',{
-                                                    id: item.id
-                                                })" v-if="item.status == 'Inactive'"
-                                                class="btn btn-sm text-white bg-blue-500 ">Activate</Link>
+                                                <button class="btn btn-sm btn-error text-white"
+                                                @click="()=>{
+                                                    hapusHandler(item.id)
+                                                }">Hapus</button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -118,6 +118,21 @@ export default {
             });
 
             this.formulir = data;
+        },
+        async hapusHandler(id){
+            try {
+                const response = await axios.delete(
+                    route('client.form.delete',{
+                        form_id: id
+                    })
+                )
+
+                if (response.status == 200){
+                    this.getFormulirData()
+                }
+            } catch (error) {
+                
+            }
         }
     },
 }

@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientManajemen;
+use App\Http\Controllers\FormAnswerController;
 use App\Http\Controllers\FormulirController;
+use App\Http\Controllers\GuestFormulirController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WhatsappController;
 use App\Http\Middleware\UserLevelMiddlerware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -77,8 +80,27 @@ Route::prefix('client')
         Route::get('view_form/{form_id}','ViewForm')->name('ViewForm');
 
         Route::post('create','Create')->name('create');
+        Route::delete('delete/{form_id}','delete')->name('delete');
+    });
+    
+    Route::prefix('wa')
+    ->name('wa.')
+    ->controller(WhatsappController::class)
+    ->middleware('subscribtion:active')
+    ->group(function(){
+        Route::get('index','index')->name('index');
+        Route::get('instance_token','getInstanceToken')->name('getInstanceToken');
     });
 });
+
+Route::prefix('guest')
+->name('guest.')
+->group(function(){
+    
+    Route::get('formulir/{form_id}',[GuestFormulirController::class,'formulir'])->name('formulir');
+    Route::post('post_formulir',[FormAnswerController::class,'store'])->name('post_formulir');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -57,4 +57,26 @@ class FormulirController extends Controller
             throw $th;
         }
     }
+
+    public function ViewForm($uuid){
+        $formulir = Formulir::where('uuid',$uuid)->first();
+        $formulir->content = json_decode($formulir->content);
+        return Inertia::render('Client/Formulir/ViewFormulir',[
+            'formulir' => $formulir
+        ]);
+    }
+
+    public function delete($formId){
+        try {
+            Formulir::find($formId)
+            ->delete();
+            return response()
+            ->json([
+                "message" => 'Berhasil menghapus data'
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            throw $th;
+        }
+    }
 }

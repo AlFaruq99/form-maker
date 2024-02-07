@@ -146,6 +146,11 @@
                                     Manajemen Formulir
                                 </Link>
                             </li>
+                            <li>
+                                <Link :href="route('client.wa.index')">
+                                    Layanan Whatsapp
+                                </Link>
+                            </li>
                         
                         </ul>
                     

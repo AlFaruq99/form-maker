@@ -12,15 +12,15 @@
 
                     <p>Isi formulir</p>
                    <div  v-for="(item, index) in content" :key="index">
-                        <div class="container formulir-body grid grid-cols-1 gap-2">
+                        <div class="container formulir-body grid grid-cols-1 gap-2 py-2">
                             <div class="grid grid-flow-row grid-cols-3">
                                 <input v-model="item.kolom" type="text" class="input input-bordered max-w-xs" placeholder="nama kolom">
                                 <select v-model="item.tipe" class="select select-bordered w-full max-w-xs">
-                                    <option selected>Text</option>
-                                    <option>Option</option>
-                                    <option>Multiple</option>
-                                    <option>File</option>
-                                    <option>Email</option>
+                                    <option selected value="text">Text</option>
+                                    <option value="option">Option</option>
+                                    <option value="multiple">Multiple</option>
+                                    <option value="file">File</option>
+                                    <option value="email">Email</option>
                                 </select>
                                 <div class="inline-flex ">
                                     <label class="label space-x-4 cursor-pointer">
@@ -28,6 +28,22 @@
                                         <span class="label-text w-fit">Wajib diisi</span> 
                                     </label>
                                 </div>
+                                <div class="py-2 col-span-3 space-y-2" v-if="item.tipe == 'option' || item.tipe == 'multiple'">
+                                    <p class="text-sm">Opsi jawaban</p>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <input type="text" v-for="(itemOpsi, indexOpsi) in item.opsi" :key="indexOpsi" v-model="itemOpsi.text" class="input input-bordered max-w-xs" placeholder="opsi">
+                                    </div>
+                                </div>
+                                <button v-if="item.tipe == 'option' || item.tipe == 'multiple'" 
+                                @click="()=>{
+                                    item.opsi.push({
+                                        text:''
+                                    })
+                                }"
+                                class="w-fit py-2 text-blue-500">
+                                    Tambah opsi jawaban
+                                </button>
+                                
                             </div>
                         </div>
                     </div>
@@ -37,9 +53,9 @@
                         content.push({
                             kolom:'nama kolom',
                             tipe:'Text',
-                            required:false
+                            required:false,
+                            opsi:[]
                         })
-                        console.log(content);
                     }"> Tambah kolom</button>
                     <button class="btn btn-primary"
                     @click="simpanHandler">Simpan</button>
