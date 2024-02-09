@@ -95,15 +95,36 @@ export default {
     data() {
         return {
             formulir:Array,
-            length: 10
+            length: 10,
+            search:''
+        }
+    },
+    watch: {
+        length(){
+            this.getFormulirData()
+        },
+        search(){
+            this.getFormulirData()
         }
     },
     mounted() {
         this.getFormulirData()
     },
     methods: {
-        async getFormulirData(){
-            let data = await axios.get(route('client.form.FormulirData'))
+        async getFormulirData(urlParam){
+            let url;
+            if(urlParam){
+                url = urlParam;
+            }else{
+                url = route('client.form.FormulirData'),{
+                    params:{
+                        length:this.length,
+                        search:this.search
+                    }
+                }
+            }
+
+            let data = await axios.get(url)
             .then((result) => {
                let data = result.data;
 
@@ -120,6 +141,9 @@ export default {
             });
 
             this.formulir = data;
+        },
+        changePageHandler(urlParam){
+            this.getFormulirData(urlParam)
         },
         async hapusHandler(id){
             try {

@@ -8,7 +8,7 @@
                     <div class="form-content border-b py-2" v-for="(item, index) in answer" :key="index">
                         <p class=" text-neutral-300">{{ item.kolom }}</p>
                         <div v-if="item.tipe == 'file'">
-                            <div class="w-24">
+                            <div class="">
                                 <img :src="`${item.path}`" class="rounded-lg  shadow-lg" alt="" srcset="">
                             </div>
                         </div>

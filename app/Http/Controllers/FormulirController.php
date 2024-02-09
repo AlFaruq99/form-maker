@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\search;
+
 class FormulirController extends Controller
 {
     public function index(){
@@ -19,9 +21,15 @@ class FormulirController extends Controller
     }
 
     public function FormulirData(Request $request){
+        $length = $request->length;
+        $search = $request->search != '' || isset($request->search) ? $request->search : null;
+
         $userId = Auth::user()->id;
         $formulir = Formulir::where('user_id',$userId)->with('shortLink')
-        ->paginate()->onEachSide(1);
+        ->when($search,function($sub) use($search){
+            $sub->where('title','ilike',"%$search%");
+        })
+        ->paginate($length)->onEachSide(1);
         return response()
         ->json($formulir);
     }
