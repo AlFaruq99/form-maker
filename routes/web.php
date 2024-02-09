@@ -2,13 +2,14 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientManajemen;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormAnswerController;
 use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\GuestFormulirController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WhatsappController;
-use App\Http\Middleware\UserLevelMiddlerware;
-use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,21 +25,30 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [DashboardController::class,'welcomePage']);
 
 
 Route::controller(AuthController::class)
 ->group(function(){
     Route::get('login','login')->name('login');
+    Route::get('register','register')->name('register');
     Route::post('authenticate','authenticate')->name('authenticate');
     Route::post('logout','logout')->name('logout');
+});
+
+Route::middleware('guest')
+->group(function(){
+    Route::prefix('webhook')
+    ->name('webhook.')
+    ->group(function(){
+        Route::get('/',function(){
+            return 'aaa';
+        });
+        Route::post('get_webhook',function(Request $request){
+            $data = $request->all();
+            Log::info('webhook',$data);
+        });
+    });
 });
 
 Route::prefix('panel')
@@ -90,6 +100,7 @@ Route::prefix('client')
     ->group(function(){
         Route::get('index','index')->name('index');
         Route::get('instance_token','getInstanceToken')->name('getInstanceToken');
+        Route::get('check_status','addWebhook')->name('addWebhook');
     });
 });
 
@@ -99,6 +110,14 @@ Route::prefix('guest')
     
     Route::get('formulir/{form_id}',[GuestFormulirController::class,'formulir'])->name('formulir');
     Route::post('post_formulir',[FormAnswerController::class,'store'])->name('post_formulir');
+
+
+    Route::prefix('dashboard')
+    ->name('dashboard')
+    ->controller()
+    ->group(function(){
+
+    });
 });
 
 

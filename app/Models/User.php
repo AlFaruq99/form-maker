@@ -50,4 +50,8 @@ class User extends Authenticatable
     public function subscription(){
         return $this->hasOne(Subscription::class,'user_id','id');
     }
+
+    public function wa_instance(){
+        return $this->hasOne(WaUser::class,'user_id','id');
+    }
 }
