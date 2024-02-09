@@ -16,7 +16,7 @@
                         </div>
 
                         <div v-if="item.tipe == 'phone'">
-                            <input type="text" @input="changePhoneValueHandler($event, index)" :name="item.kolom" v-model="item.answer" class="input input-bordered w-full" :placeholder="item.kolom">
+                            <input type="text" @input="changePhoneValueHandler($event, index)" :name="item.kolom" v-model="item.answer" class="input input-bordered w-full" placeholder="8xx-xxxx-xxxx">
                         </div>
                         
                         <div v-if="item.tipe == 'option'">
@@ -144,13 +144,16 @@ export default {
                     let number = phoneNumberGuest[0].answer;
                     
                     
-                    this.sendResponseWaHandler(number);
-                    window.location.href = route('guest.responsePage',{
-                        'form_id' : this.Question.uuid
-                    });
-                    // this.Question.content.forEach(element => {
-                    //     element.answer = null
-                    // });
+                    var responseSendWa = await this.sendResponseWaHandler(number);
+                    
+                    if (responseSendWa) {
+                        setTimeout(() => {
+                            window.location.href = route('guest.responsePage',{
+                                'form_id' : this.Question.uuid
+                            });
+                            
+                        }, 3000);
+                    }
                 }
             }else{
                 this.errorResponse = filteredArray;
@@ -168,12 +171,12 @@ export default {
                 }
                 )
                 .then((result) => {
-                    
-                    
-
+                  return true;  
                 }).catch((err) => {
-                    
+                 return false
                 });
+
+                return response;
             } catch (error) {
                 console.log(error)
             }

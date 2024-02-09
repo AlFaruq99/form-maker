@@ -6,7 +6,9 @@ use App\Models\FormAnswer;
 use App\Models\Formulir;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class FormAnswerController extends Controller
@@ -43,11 +45,15 @@ class FormAnswerController extends Controller
     {
         try {
             $data = $request->all();
+            
             foreach ($data['content'] as $key => $value) {
-                if (isset($value['asnwer']) && $value['answer'] instanceof UploadedFile) {
-                    $value['answer']->move(storage_path('upload/guestfile'), $value['answer']->getClientOriginalName());
-                    $value['path'] = 'upload/guestfile/'.$value['answer']->getClientOriginalName().date('YmdHis');
+                if (isset($value['answer']) && $value['tipe'] == 'file') {
+                    Storage::putFileAs('public', $value['answer'], $value['answer']->getClientOriginalName());
+                    $publicUrl = Storage::url('public/' . $value['answer']->getClientOriginalName());
+                    
+                    $value['path'] = $publicUrl;
                     unset($value['answer']);
+                    
                     $data['content'][$key] = $value;
                 }
             }
@@ -70,9 +76,20 @@ class FormAnswerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FormAnswer $formAnswer)
+    public function show($form_id)
     {
-        //
+        try {
+            $formulirAnswer = FormAnswer::where('id',$form_id)
+            ->whereHas('question',function($sub){
+                $sub->where('user_id',Auth::user()->id);
+            })->first();
+            return Inertia::render('Client/Formulir/ViewAnswer',[
+                'answerProp' => $formulirAnswer
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            abort(404);
+        }
     }
 
     /**
@@ -94,8 +111,19 @@ class FormAnswerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FormAnswer $formAnswer)
+    public function destroy(int $form_id)
     {
-        //
+        try {
+            
+            FormAnswer::find($form_id)->delete();
+            return response()
+            ->json([
+                "message" => 'Berhasil menghapus data'
+            ]);
+
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            throw $th;
+        }
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\GuestFormulirController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WhatsappController;
+use App\Models\FormAnswer;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -88,9 +89,19 @@ Route::prefix('client')
         Route::get('create_form','CreateForm')->name('CreateForm');
         Route::get('formulir_data','FormulirData')->name('FormulirData');
         Route::get('view_form/{form_id}','ViewForm')->name('ViewForm');
-
+        Route::get('responder_page','responderPage')->name('responderPage');
+        Route::get('responder_list','responderList')->name('responderList');
         Route::post('create','Create')->name('create');
         Route::delete('delete/{form_id}','delete')->name('delete');
+    });
+
+    Route::prefix('form_answer')
+    ->name('formAnswer.')
+    ->controller(FormAnswerController::class)
+    ->middleware('subscribtion:active')
+    ->group(function(){
+        Route::delete('delete_anwer/{form_id}','destroy')->name('deleteAnswer');
+        Route::get('show/{form_id}','show')->name('show');
     });
     
     Route::prefix('wa')

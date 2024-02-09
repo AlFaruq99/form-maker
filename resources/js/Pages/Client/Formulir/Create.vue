@@ -95,10 +95,12 @@ export default {
                     content: this.content
                 }))
 
-                window.location.href = route('client.form.index');
+                if (response.status == 200) {
+                    window.location.href = route('client.form.index');
+                }
 
             } catch (error) {
-                
+                console.log(error)
             }
         },
         removeFormItem(index){

@@ -21,6 +21,10 @@ class Formulir extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
 
+    public function answer(){
+        return $this->hasMany(FormAnswer::class,'formulir_id','id');
+    }
+
     public function shortLink(){
         return $this->hasOne(ShortLink::class,'short_url','url');
     }

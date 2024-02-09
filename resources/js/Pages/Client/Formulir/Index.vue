@@ -30,7 +30,6 @@
                                             <th></th>
                                             <th>Judul</th>
                                             <th>Tanggal dibuat</th>
-                                            <th>Status</th>
                                             <th>Link</th>
                                             <th></th>
                                         </tr>
@@ -42,12 +41,14 @@
                                             <th>{{ formulir.from + index }}</th>
                                             <td>{{ item?.title }}</td>
                                             <td>{{ item?.tanggal_dibuat }}</td>
-                                            <td>{{ item?.status }}</td>
                                             <td>
                                                 <Link :href="item?.short_link.original_url">{{ item?.url }}</Link>
                                             </td>
                                             <td class="inline-flex space-x-2">
-                                                <button class="btn"><svg xmlns="http://www.w3.org/2000/svg" class="text-neutral-900" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5h8m-8 4h5m-5 6h8m-8 4h5M3 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zm0 10a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg></button>
+                                                <Link :href="route('client.form.responderPage')" class="btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-neutral-900" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5h8m-8 4h5m-5 6h8m-8 4h5M3 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zm0 10a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+                                                    Responder
+                                                </Link>
                                                 <button class="btn  bg-rose-600 text-white"
                                                 @click="()=>{
                                                     hapusHandler(item.id)

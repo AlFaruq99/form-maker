@@ -136,7 +136,7 @@ class WhatsappController extends Controller
                     [
                         "number"=> $phone,
                         "type"=> "text",
-                        "message"=> "Jawaban anda telah kami simpan",
+                        "message"=> "Jawaban anda telah kami simpan"."\r\n\r\n"."Form-maker: ".$formulir->title."\r\n"."Tanggal ".date('d-M-Y')."\r\n".date('H:i:s'),
                         "instance_id"=> $waInstance->instance_id,
                         "access_token"=> env('VITE_WA_ACCESS')
                     ]

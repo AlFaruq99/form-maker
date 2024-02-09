@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FormAnswer;
 use App\Models\Formulir;
 use App\Models\ShortLink;
 use App\Models\User;
@@ -50,7 +51,7 @@ class FormulirController extends Controller
             ]);
 
             ShortLink::create([
-                'original_url' => route('client.form.ViewForm',['form_id'=>$uuid]),
+                'original_url' => route('guest.formulir',['form_id'=>$uuid]),
                 'short_url' => $randomUrl
             ]);
 
@@ -88,5 +89,31 @@ class FormulirController extends Controller
             Log::error($th->getMessage());
             throw $th;
         }
+    }
+
+    public function responderPage(){
+        return Inertia::render('Client/Formulir/Responder');
+    }
+
+    public function responderList(Request $request){
+        try {
+            $length = $request->length;
+            $user = Auth::user();
+            if (!isset($user)) {
+                abort(404);
+            }
+
+            $formulir = Formulir::where('user_id',$user->id)
+            ->first();
+
+            $answerData = FormAnswer::where('formulir_id',$formulir->id)
+            ->paginate($length);
+
+            return response()
+            ->json($answerData);
+        } catch (\Throwable $th) {
+            return abort(404);
+        }
+        
     }
 }
