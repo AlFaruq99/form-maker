@@ -14,6 +14,10 @@
                         <div v-if="item.tipe == 'text'">
                             <input type="text" :name="item.kolom" v-model="item.answer" class="input input-bordered w-full" :placeholder="item.kolom">
                         </div>
+
+                        <div v-if="item.tipe == 'phone'">
+                            <input type="text" @input="changePhoneValueHandler($event, index)" :name="item.kolom" v-model="item.answer" class="input input-bordered w-full" :placeholder="item.kolom">
+                        </div>
                         
                         <div v-if="item.tipe == 'option'">
                             <select :name="item.kolom" :required="item.required == '1'" v-model="item.answer" class="select select-bordered w-full" id="">
@@ -73,6 +77,8 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
 import FormValidation from '@/formValidation';
+import PhoneNumber from '@/PhoneNumber';
+
 
 export default {
     components:{
@@ -91,6 +97,11 @@ export default {
         this.Question = this.formulir
     },
     methods: {
+        changePhoneValueHandler(component, index){
+            var item = component.target;
+            const numberVal = new PhoneNumber().formatPhoneNumber(item.value);
+            this.Question.content[index].answer = numberVal
+        },
         inputFileHandler(component,index){
             this.Question.content[index].answer = component.target.files[0]
         },
@@ -103,7 +114,7 @@ export default {
                     return item.kolom;
                 });
                 data.join(',')
-                return data.join(',')+' belum diisi';
+                return data.join(', ')+' belum diisi';
             }
             else {
                 return true
@@ -126,15 +137,47 @@ export default {
                 });
                 if (response.status == 200) {
                     successModal.showModal();
-                    this.Question.content.forEach(element => {
-                        element.answer = null
+                    
+                    const phoneNumberGuest = this.Question.content.filter((item) => {
+                        return item.tipe == 'phone'
                     });
+                    let number = phoneNumberGuest[0].answer;
+                    
+                    
+                    this.sendResponseWaHandler(number);
+                    window.location.href = route('guest.responsePage',{
+                        'form_id' : this.Question.uuid
+                    });
+                    // this.Question.content.forEach(element => {
+                    //     element.answer = null
+                    // });
                 }
             }else{
                 this.errorResponse = filteredArray;
                 errorModal.showModal()
             }
         },
+        async sendResponseWaHandler(guestPhone){
+            try {
+                const response = await axios.post(
+                route('guest.sendMessage',{
+                    'form_id' : this.Question.id
+                }),
+                {
+                    'phone' : guestPhone
+                }
+                )
+                .then((result) => {
+                    
+                    
+
+                }).catch((err) => {
+                    
+                });
+            } catch (error) {
+                console.log(error)
+            }
+        }
        
     },
 }

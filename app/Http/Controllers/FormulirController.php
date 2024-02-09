@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Formulir;
+use App\Models\ShortLink;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class FormulirController extends Controller
 
     public function FormulirData(Request $request){
         $userId = Auth::user()->id;
-        $formulir = Formulir::where('user_id',$userId)
+        $formulir = Formulir::where('user_id',$userId)->with('shortLink')
         ->paginate()->onEachSide(1);
         return response()
         ->json($formulir);
@@ -38,14 +39,19 @@ class FormulirController extends Controller
             ]);
 
             $uuid = Str::uuid();
-            
+            $randomUrl = Str::random(6);
             
             Formulir::create([
                 'uuid' => $uuid,
                 'user_id' => Auth::user()->id,
                 'title' => $data['title'],
                 'content' => json_encode($data['content']),
-                'url' => route('client.form.ViewForm',['form_id'=>$uuid])
+                'url' => $randomUrl
+            ]);
+
+            ShortLink::create([
+                'original_url' => route('client.form.ViewForm',['form_id'=>$uuid]),
+                'short_url' => $randomUrl
             ]);
 
             return response()
@@ -59,11 +65,15 @@ class FormulirController extends Controller
     }
 
     public function ViewForm($uuid){
-        $formulir = Formulir::where('uuid',$uuid)->first();
-        $formulir->content = json_decode($formulir->content);
-        return Inertia::render('Client/Formulir/ViewFormulir',[
-            'formulir' => $formulir
-        ]);
+        try {
+            $formulir = Formulir::where('uuid',$uuid)->first();
+            $formulir->content = json_decode($formulir->content);
+            return Inertia::render('Client/Formulir/ViewFormulir',[
+                'formulir' => $formulir
+            ]);
+        } catch (\Throwable $th) {
+            abort(404);
+        }
     }
 
     public function delete($formId){

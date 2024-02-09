@@ -21,6 +21,7 @@
                                     <option value="multiple">Multiple</option>
                                     <option value="file">File</option>
                                     <option value="email">Email</option>
+                                    <option value="phone">Phone Number</option>
                                 </select>
                                 <div class="inline-flex space-x-2">
                                     <label class="label space-x-4 cursor-pointer">
@@ -38,6 +39,7 @@
                                         <input type="text" v-for="(itemOpsi, indexOpsi) in item.opsi" :key="indexOpsi" v-model="itemOpsi.text" class="input input-bordered max-w-xs" placeholder="opsi">
                                     </div>
                                 </div>
+                                
                                 <button v-if="item.tipe == 'option' || item.tipe == 'multiple'" 
                                 @click="()=>{
                                     item.opsi.push({

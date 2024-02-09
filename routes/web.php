@@ -107,17 +107,11 @@ Route::prefix('client')
 Route::prefix('guest')
 ->name('guest.')
 ->group(function(){
-    
     Route::get('formulir/{form_id}',[GuestFormulirController::class,'formulir'])->name('formulir');
     Route::post('post_formulir',[FormAnswerController::class,'store'])->name('post_formulir');
-
-
-    Route::prefix('dashboard')
-    ->name('dashboard')
-    ->controller()
-    ->group(function(){
-
-    });
+    Route::get('response_formulir',[FormAnswerController::class,'responsePage'])->name('responsePage');
+    //----------- send message
+    Route::post('send_wa/{form_id}',[WhatsappController::class,'sendMessage'])->name('sendMessage');
 });
 
 

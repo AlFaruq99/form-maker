@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\FormAnswer;
+use App\Models\Formulir;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class FormAnswerController extends Controller
 {
@@ -25,6 +27,15 @@ class FormAnswerController extends Controller
         //
     }
 
+
+    public function responsePage(Request $request){
+        $formulir = Formulir::where('uuid',$request->form_id)->first();
+        
+        return Inertia::render('Guest/ResponsePage',[
+            'formulir' => $formulir
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -33,7 +44,7 @@ class FormAnswerController extends Controller
         try {
             $data = $request->all();
             foreach ($data['content'] as $key => $value) {
-                if ($value['answer'] instanceof UploadedFile) {
+                if (isset($value['asnwer']) && $value['answer'] instanceof UploadedFile) {
                     $value['answer']->move(storage_path('upload/guestfile'), $value['answer']->getClientOriginalName());
                     $value['path'] = 'upload/guestfile/'.$value['answer']->getClientOriginalName().date('YmdHis');
                     unset($value['answer']);
