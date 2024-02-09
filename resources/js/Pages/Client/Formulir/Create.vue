@@ -22,12 +22,16 @@
                                     <option value="file">File</option>
                                     <option value="email">Email</option>
                                 </select>
-                                <div class="inline-flex ">
+                                <div class="inline-flex space-x-2">
                                     <label class="label space-x-4 cursor-pointer">
                                         <input type="checkbox" v-model="item.required" class="checkbox" />
                                         <span class="label-text w-fit">Wajib diisi</span> 
                                     </label>
+                                    <button class="btn btn-circle text-rose-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" @click="removeFormItem(index)" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/></svg>
+                                    </button>
                                 </div>
+                                
                                 <div class="py-2 col-span-3 space-y-2" v-if="item.tipe == 'option' || item.tipe == 'multiple'">
                                     <p class="text-sm">Opsi jawaban</p>
                                     <div class="grid grid-cols-1 gap-2">
@@ -94,7 +98,13 @@ export default {
             } catch (error) {
                 
             }
-            
+        },
+        removeFormItem(index){
+            if (index >= 0 && index < this.content.length) {
+                this.content.splice(index, 1); // Remove 1 element at the specified index
+            } else {
+                console.log("Invalid index");
+            }   
         }
     },
     
