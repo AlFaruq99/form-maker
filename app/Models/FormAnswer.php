@@ -12,6 +12,7 @@ class FormAnswer extends Model
     protected $fillable = ['formulir_id','answer'];
 
     public function question(){
-        return $this->belongsTo(Formulir::class,'id','formulir_id');
+        return $this->belongsTo(Formulir::class,'formulir_id','id');
     }
+    
 }

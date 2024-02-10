@@ -12,6 +12,11 @@
                         <div class="container form-group space-y-1">
                             <!-- {{ item }} -->
                             <Label>{{item.kolom}}</Label>
+
+                            <div v-if="item.tipe == 'phone'">
+                                <input type="text" @input="changePhoneValueHandler($event, index)" :name="item.kolom" v-model="item.answer" class="input input-bordered w-full" :placeholder="item.kolom">
+                            </div>
+
                             <div v-if="item.tipe == 'text'">
                                 <input type="text"  class="input input-bordered w-full" :placeholder="item.kolom">
                             </div>
@@ -36,7 +41,6 @@
                         </div>
                         
                     </div>
-                    <button class="btn btn-primary">Simpan</button>
                 </div>
             </div>
         </div>

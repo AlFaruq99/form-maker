@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FormAnswer;
 use App\Models\Formulir;
+use App\Models\ShortLink;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\search;
 
 class FormulirController extends Controller
 {
@@ -17,9 +21,15 @@ class FormulirController extends Controller
     }
 
     public function FormulirData(Request $request){
+        $length = $request->length;
+        $search = $request->search != '' || isset($request->search) ? $request->search : null;
+
         $userId = Auth::user()->id;
-        $formulir = Formulir::where('user_id',$userId)
-        ->paginate()->onEachSide(1);
+        $formulir = Formulir::where('user_id',$userId)->with('shortLink')
+        ->when($search,function($sub) use($search){
+            $sub->where('title','ilike',"%$search%");
+        })
+        ->paginate($length)->onEachSide(1);
         return response()
         ->json($formulir);
     }
@@ -38,14 +48,19 @@ class FormulirController extends Controller
             ]);
 
             $uuid = Str::uuid();
-            
+            $randomUrl = Str::random(6);
             
             Formulir::create([
                 'uuid' => $uuid,
                 'user_id' => Auth::user()->id,
                 'title' => $data['title'],
                 'content' => json_encode($data['content']),
-                'url' => route('client.form.ViewForm',['form_id'=>$uuid])
+                'url' => $randomUrl
+            ]);
+
+            ShortLink::create([
+                'original_url' => route('guest.formulir',['form_id'=>$uuid]),
+                'short_url' => $randomUrl
             ]);
 
             return response()
@@ -59,11 +74,15 @@ class FormulirController extends Controller
     }
 
     public function ViewForm($uuid){
-        $formulir = Formulir::where('uuid',$uuid)->first();
-        $formulir->content = json_decode($formulir->content);
-        return Inertia::render('Client/Formulir/ViewFormulir',[
-            'formulir' => $formulir
-        ]);
+        try {
+            $formulir = Formulir::where('uuid',$uuid)->first();
+            $formulir->content = json_decode($formulir->content);
+            return Inertia::render('Client/Formulir/ViewFormulir',[
+                'formulir' => $formulir
+            ]);
+        } catch (\Throwable $th) {
+            abort(404);
+        }
     }
 
     public function delete($formId){
@@ -78,5 +97,31 @@ class FormulirController extends Controller
             Log::error($th->getMessage());
             throw $th;
         }
+    }
+
+    public function responderPage(){
+        return Inertia::render('Client/Formulir/Responder');
+    }
+
+    public function responderList(Request $request){
+        try {
+            $length = $request->length;
+            $user = Auth::user();
+            if (!isset($user)) {
+                abort(404);
+            }
+
+            $formulir = Formulir::where('user_id',$user->id)
+            ->first();
+
+            $answerData = FormAnswer::where('formulir_id',$formulir->id)
+            ->paginate($length);
+
+            return response()
+            ->json($answerData);
+        } catch (\Throwable $th) {
+            return abort(404);
+        }
+        
     }
 }
