@@ -12,18 +12,18 @@
                 <div class="stats shadow w-fit">
   
                     <div class="stat">
-                        <div class="stat-title">Total User</div>
-                        <div class="stat-value">89,400</div>
+                        <div class="stat-title">Total Client</div>
+                        <div class="stat-value">{{ total_client }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     <div class="stat">
                         <div class="stat-title">Active User</div>
-                        <div class="stat-value">89,400</div>
+                        <div class="stat-value text-primary">{{ client_active }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     <div class="stat">
                         <div class="stat-title">Inactive User</div>
-                        <div class="stat-value">89,400</div>
+                        <div class="stat-value text-error">{{ client_inactive }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     
@@ -32,10 +32,10 @@
                 <div class="bg-white card overflow-hidden">
                     <div class="p-6 text-gray-900 grid grid-cols gap-6">
                         <div class="container">
-                            <button class="btn btn-md btn-primary float-end">
+                            <Link :href="route('panel.user.create')" class="btn btn-md btn-primary float-end">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"/></svg>
                                 Tambah
-                            </button>
+                            </Link>
                         </div>
 
                         <div class="container filter-container flex flex-row justify-between">
@@ -130,6 +130,11 @@ import initialName from '@/initialName';
 export default {
     components:{
         AuthenticatedLayoutAdmin, Head, TableVue, TextInput, Link
+    },
+    props:{
+        total_client: Number,
+        client_active: Number,
+        client_inactive: Number
     },
     data() {
         return {

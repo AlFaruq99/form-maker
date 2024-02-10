@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 use App\Models\Invoice;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -15,54 +17,65 @@ class InvoiceController extends Controller
     }
 
     public function createInvoice(Request $request){
+        DB::beginTransaction();
         try{
             $data = $request->validate([
                 'no_invoice' => 'required|string',
                 'transaction_date' => 'required|date',
                 'due_date' => 'required|date',
-                'url' => 'required|url',
+                'file' => 'required',
                 'invoice_name' => 'required|string',
                 's_company_name' => 'required|string',
                 's_company_address' => 'required|string',
                 's_phone_number' => 'required|string',
-                's_email' => 'required|email',
+                's_email' => 'required',
+                'client_id' => 'required',
                 'd_company_name' => 'required|string',
                 'd_company_address' => 'required|string',
                 'd_phone_number' => 'required|string',
-                'd_email' => 'required|email',
+                'd_email' => 'required',
                 'note' => 'nullable|string',
                 'subtotal' => 'nullable|numeric',
                 'discount' => 'nullable|numeric',
                 'tax' => 'nullable|numeric',
                 'total' => 'nullable|numeric',
             ]);
-            $invoice = Invoice::create([
+
+            $invoiceData = [
                 'no_invoice' => $data['no_invoice'],
                 'transaction_date' => $data['transaction_date'],
                 'due_date' => $data['due_date'],
-                'url' => $data['url'],
-                'invoice_name' => $data['invoice_name'],
-                's_company_name' => $data['s_company_name'],
-                's_company_address' => $data['s_company_address'],
-                's_phone_number' => $data['s_phone_number'],
-                's_email' => $data['s_email'],
-                'd_company_name' => $data['d_company_name'],
-                'd_company_address' => $data['d_company_address'],
-                'd_phone_number' => $data['d_phone_number'],
-                'd_email' => $data['d_email'],
-                'note' => $data['note'],
+                'file_path' => $data['file'],
+                'invoice_name' => $data['invoice_name']??null,
+                's_company_name' => $data['s_company_name']??null,
+                's_company_address' => $data['s_company_address']??null,
+                's_phone_number' => $data['s_phone_number']??null,
+                's_email' => $data['s_email']??null,
+                'client_id' => $data['client_id'],
+                'd_company_name' => $data['d_company_name']??null,
+                'd_company_address' => $data['d_company_address']??null,
+                'd_phone_number' => $data['d_phone_number']??null,
+                'd_email' => $data['d_email']??null,
+                'note' => $data['note']??null,
                 'subtotal' => $data['subtotal'],
                 'discount' => $data['discount'],
                 'tax' => $data['tax'],
                 'total' => $data['total'],
-            ]);
-        
+            ];
+
+            $invoiceData = array_filter($invoiceData);
+
+            $invoice = Invoice::create($invoiceData);
+
+
+            DB::commit();
             return response()
                 ->json([
                     "message" => 'Berhasil Membuat Invoice',
                     "invoice_url" => route('invoice.show', ['invoice' => $invoice->id])
                 ]);
         }catch(\Throwable $error){
+            DB::rollBack();
             Log::error($error->getMessage());
             throw $error;
         }

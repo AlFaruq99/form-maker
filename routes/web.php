@@ -70,6 +70,8 @@ Route::prefix('panel')
         Route::get('index','index')->name('index');
         Route::get('client_data','clientData')->name('clientData');
         Route::get('index_activation','userActivation')->name('userActivation');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
         Route::post('activate','activate')->name('activate');
     });
     Route::prefix('invoice')
