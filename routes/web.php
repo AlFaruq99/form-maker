@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientManajemen;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\FormAnswerController;
 use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\GuestFormulirController;
@@ -68,6 +69,15 @@ Route::prefix('panel')
         Route::get('client_data','clientData')->name('clientData');
         Route::get('index_activation','userActivation')->name('userActivation');
         Route::post('activate','activate')->name('activate');
+    });
+    Route::prefix('invoice')
+    ->name('invoice.')
+    ->controller(InvoiceController::class)
+    ->group(function(){
+        Route::get('index','index')->name('index');
+        Route::get('invoices/{invoice}', 'show')->name('preview');
+
+        Route::post('create','createInvoice')->name('create');
     });
 });
 

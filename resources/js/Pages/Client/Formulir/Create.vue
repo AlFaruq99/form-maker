@@ -9,7 +9,6 @@
                         <label for="judul" class="text-sm">Judul Formulir</label>
                         <input type="text" v-model="title" class="input input-bordered w-full max-w-xs" placeholder="judul formulir">
                     </div>
-
                     <p>Isi formulir</p>
                    <div  v-for="(item, index) in content" :key="index">
                         <div class="container formulir-body grid grid-cols-1 gap-2 py-2">
