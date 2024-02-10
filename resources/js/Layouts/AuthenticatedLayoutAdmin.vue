@@ -157,7 +157,11 @@ const showingNavigationDropdown = ref(false);
                                     Manajemen User
                                 </Link>
                             </li>
-                        
+                            <li>
+                                <Link :href="route('panel.invoice.index')">
+                                    Manajemen Invoice
+                                </Link>
+                            </li>
                         </ul>
                     
                     </div>
