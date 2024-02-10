@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClientManajemen;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormAnswerController;
@@ -76,9 +77,7 @@ Route::prefix('client')
 ->name('client.')
 ->middleware('userlevel:client')
 ->group(function(){
-    Route::get('/dashboard',function(){
-        return Inertia::render('Client/Dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard',[ClientDashboardController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::prefix('form')
     ->name('form.')
