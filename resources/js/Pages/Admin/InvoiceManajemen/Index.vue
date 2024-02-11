@@ -128,7 +128,8 @@
                         </div>
                         <hr>
                         <div class="flex justify-end gap-4">
-                            <button class="btn btn-outline btn-primary" @click="preview">Preview</button>
+                            <Link :href="route('panel.invoice.stream')" class="btn btn-outline btn-primary">Preview</Link>
+                            <button class="btn btn-outline btn-primary" >Preview</button>
                             <button class="btn btn-primary" @click="createHandler">Unduh Invoice</button>
                         </div>
                     </div>
@@ -145,7 +146,7 @@ import axios from 'axios';
 
 export default {
     components: {
-        AuthenticatedLayoutAdmin,Head
+        AuthenticatedLayoutAdmin,Head,Link
     },
     data() {
         return {
@@ -213,10 +214,23 @@ export default {
                 console.error('Gagal memasukkan data', error);
             }
         },
-        preview() {
-            const previewUrl = route('admin.invoice.preview', { id: this.invoice.id });
-            this.$inertia.visit(previewUrl);
-        }  
+        generatePdf() {
+            try {
+                const response = axios.get(route('panel.invoice.stream',{
+                }))
+
+                if (response.status == 200) {
+                    const pdfUrl = response.data.link;
+                    window.open(pdfUrl, '_blank');
+                }
+                else{
+                    console.error('Failed to generate PDF');
+                }
+
+            } catch (error) {
+                console.error('Failed to generate PDF');
+            }
+        }
     },
     computed: {
         grandTotal() {

@@ -76,7 +76,7 @@ Route::prefix('panel')
     ->controller(InvoiceController::class)
     ->group(function(){
         Route::get('index','index')->name('index');
-        Route::get('invoices/{invoice}', 'show')->name('preview');
+        Route::get('preview-pdf-file', 'stream')->name('stream');
 
         Route::post('create','createInvoice')->name('create');
     });
