@@ -13,7 +13,7 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+            <nav class="bg-blue-600 border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -29,7 +29,9 @@ const showingNavigationDropdown = ref(false);
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('panel.dashboard')" :active="route().current('dashboard')">
+                                <NavLink 
+                                class="text-white"
+                                :href="route('panel.dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
                             </div>
@@ -43,7 +45,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-transparent hover:text-blue-600 hover:bg-white  focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -145,20 +147,24 @@ const showingNavigationDropdown = ref(false);
                     
                     <div class="drawer-side">
                         <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label> 
-                        <ul class="menu p-4 w-80 min-h-full bg-white shadow text-neutral-900">
+                        <ul class="menu p-4 space-y-2 w-80 min-h-full bg-white shadow text-neutral-900">
                         <!-- Sidebar content here -->
                             <li>
                                 <Link :href="route('panel.dashboard')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-blue-600" viewBox="0 0 24 24"><path fill="currentColor" d="M5.615 20q-.666 0-1.14-.475Q4 19.051 4 18.385V12.25h6.5V20zm5.885 0v-7.75H20v6.135q0 .666-.475 1.14q-.474.475-1.14.475zM4 11.25V5.615q0-.666.475-1.14Q4.949 4 5.615 4h12.77q.666 0 1.14.475q.475.474.475 1.14v5.635z"/></svg>
                                     Dashboard
                                 </Link>
                             </li>
+                            <hr>
                             <li>
                                 <Link :href="route('panel.user.index')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-blue-600" viewBox="0 0 24 24"><path fill="currentColor" d="M24 14.6c0 .6-1.2 1-2.6 1.2c-.9-1.7-2.7-3-4.8-3.9c.2-.3.4-.5.6-.8h.8c3.1-.1 6 1.8 6 3.5M6.8 11H6c-3.1 0-6 1.9-6 3.6c0 .6 1.2 1 2.6 1.2c.9-1.7 2.7-3 4.8-3.9zm5.2 1c2.2 0 4-1.8 4-4s-1.8-4-4-4s-4 1.8-4 4s1.8 4 4 4m0 1c-4.1 0-8 2.6-8 5c0 2 8 2 8 2s8 0 8-2c0-2.4-3.9-5-8-5m5.7-3h.3c1.7 0 3-1.3 3-3s-1.3-3-3-3c-.5 0-.9.1-1.3.3c.8 1 1.3 2.3 1.3 3.7c0 .7-.1 1.4-.3 2M6 10h.3C6.1 9.4 6 8.7 6 8c0-1.4.5-2.7 1.3-3.7C6.9 4.1 6.5 4 6 4C4.3 4 3 5.3 3 7s1.3 3 3 3"/></svg>
                                     Manajemen User
                                 </Link>
                             </li>
                             <li>
                                 <Link :href="route('panel.invoice.index')">
+                                    <svg xmlns="http://www.w3.org/2000/svg"  class="w-6 text-blue-600" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M19 21.5H6A3.5 3.5 0 0 1 2.5 18V4.943c0-1.067 1.056-1.744 1.985-1.422c.133.046.263.113.387.202l.175.125a2.51 2.51 0 0 0 2.912-.005a3.52 3.52 0 0 1 4.082 0a2.51 2.51 0 0 0 2.912.005l.175-.125c.993-.71 2.372 0 2.372 1.22V12.5H21a.75.75 0 0 1 .75.75v5.5A2.75 2.75 0 0 1 19 21.5M17.75 14v4.75a1.25 1.25 0 0 0 2.5 0V14zM13.5 9.75a.75.75 0 0 0-.75-.75h-6a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 .75-.75m-1 3a.75.75 0 0 0-.75-.75h-5a.75.75 0 1 0 0 1.5h5a.75.75 0 0 0 .75-.75m.25 2.25a.75.75 0 1 1 0 1.5h-6a.75.75 0 0 1 0-1.5z" clip-rule="evenodd"/></svg>
                                     Manajemen Invoice
                                 </Link>
                             </li>

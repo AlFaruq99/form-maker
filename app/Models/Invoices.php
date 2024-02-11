@@ -30,6 +30,6 @@ class Invoices extends Model
     ];
 
     public function content(){
-        return $this.belongsTo(InvoiceAsset::class,'no_invoice','no_invoice');
+        return $this->belongsTo(InvoiceAsset::class,'no_invoice','no_invoice');
     }
 }

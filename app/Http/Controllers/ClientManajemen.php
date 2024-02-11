@@ -3,16 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientBilling;
+use App\Models\Role;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ClientManajemen extends Controller
 {
     public function index(Request $request){
+
+        $totalClient = User::with('role')
+        ->whereHas('role',function($sub){
+            $sub->where('level','client');
+        })
+        ->count();
+
+        $clientActive = User::with('role')
+        ->whereHas('role',function($sub){
+            $sub->where('level','client');
+        })
+        ->whereHas('subscription',function($sub){
+            $sub->where('expired_at','<',date('Y-m-d'));
+        })
+        ->count();
+
+        $clientInactive = User::with('role')
+        ->whereHas('role',function($sub){
+            $sub->where('level','client');
+        })
+        ->where(function($sub){
+            $sub->whereHas('subscription',function($subItem){
+                $subItem->where('expired_at','>',date('Y-m-d'));
+            })
+            ->orWhereDoesntHave('subscription');
+        })
+        ->count();
+
         return Inertia::render(
-            'Admin/UserManajemen/Index',
+            'Admin/UserManajemen/Index',[
+                'total_client' => $totalClient,
+                'client_active' => $clientActive,
+                'client_inactive' => $clientInactive
+            ]
         );
     }
 
@@ -82,6 +118,48 @@ class ClientManajemen extends Controller
 
     }
 
+    public function create(){
+        return Inertia::render('Admin/UserManajemen/Create');
+    }
 
+    public function store(Request $request){
+        DB::beginTransaction();
+        try {
+
+            $data = $request->validate([
+                'nama' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:6|same:confirm_password',
+                'confirm_password' => 'required|min:6',
+                'level' => 'required|string',
+                'tgl_exp' => 'nullable'
+            ]);
+
+            $user = User::create([
+                'name' => $data['nama'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password'])
+            ]);
+
+            $level = Role::create([
+                'user_id' => $user->id,
+                'level' => $data['level']
+            ]);
+
+            $subsription = Subscription::create([
+                'user_id' => $user->id,
+                'expired_at' => $data['tgl_exp']
+            ]);
+
+            DB::commit();
+            return response()
+            ->json([
+                "message" => 'Berhasil membuat pengguna'
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            throw $th;
+        }
+    }
     
 }

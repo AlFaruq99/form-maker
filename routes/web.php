@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClientManajemen;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
@@ -69,6 +70,8 @@ Route::prefix('panel')
         Route::get('index','index')->name('index');
         Route::get('client_data','clientData')->name('clientData');
         Route::get('index_activation','userActivation')->name('userActivation');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
         Route::post('activate','activate')->name('activate');
     });
     Route::prefix('invoice')
@@ -86,9 +89,7 @@ Route::prefix('client')
 ->name('client.')
 ->middleware('userlevel:client')
 ->group(function(){
-    Route::get('/dashboard',function(){
-        return Inertia::render('Client/Dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard',[ClientDashboardController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::prefix('form')
     ->name('form.')
