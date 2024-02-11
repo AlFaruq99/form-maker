@@ -35,6 +35,8 @@
                     </ul>
                     
                     <InvoiceBelumLunas v-show="status.value == 'belum_bayar'"></InvoiceBelumLunas>
+                    <InvoiceDP v-show="status.value == 'dp'"></InvoiceDP>
+                    <InvoiceLunas v-show="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>
        </AuthenticatedLayoutAdmin> 
@@ -44,12 +46,14 @@
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin.vue';
 import InvoiceBelumLunas from './InvoiceBelumLunas.vue';
+import InvoiceDP from './InvoiceDP.vue';
+import InvoiceLunas from './InvoiceLunas.vue';
 import moment from 'moment';
 import axios from 'axios';
 
 export default {
     components: {
-        AuthenticatedLayoutAdmin,Head,Link,InvoiceBelumLunas
+        AuthenticatedLayoutAdmin,Head,Link,InvoiceBelumLunas,InvoiceDP,InvoiceLunas
     },
     props:{
         status:String
