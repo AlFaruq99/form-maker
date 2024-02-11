@@ -21,7 +21,10 @@
                                     <button class="rounded-lg btn btn-outline btn-error" v-if="url_file_path" @click="clearUrl">x</button>
                                 </div>
                             </div>
-                            <input type="text" v-model="invoice_name" placeholder="Nama Invoice" class="input input-bordered w-1/2 justify-self-end" />
+                           <div class="w-full flex flex-col justify-start items-end space-y-2">
+                                <input type="text" v-model="invoice_name" placeholder="Nama Invoice" class="input input-bordered"/>
+                                <p class="text-3xl font-semibold">{{ status.text }}</p>
+                           </div>
                         </div>
                         <div class="grid grid-cols-2 grid-flow-col-dense gap-4">
                             <div class="flex">
@@ -146,6 +149,9 @@ import axios from 'axios';
 export default {
     components: {
         AuthenticatedLayoutAdmin,Head
+    },
+    props:{
+        status:String
     },
     data() {
         return {

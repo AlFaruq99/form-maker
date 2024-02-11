@@ -17,11 +17,57 @@ use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
-    public function index(){
-        return Inertia::render('Admin/InvoiceManajemen/Index');
+    public function statusValidate($status){
+        $status = $status??'belum_bayar';
+        $statusList = ['belum_bayar','dp','lunas'];
+        if (!in_array($status,$statusList)) {
+            return false;
+        }
+
+        switch ($status) {
+            case 'belum_bayar':
+                    return [
+                        "value" => 'belum_bayar',
+                        "text" => 'Belum Bayar'
+                    ];
+                break;
+            case 'dp':
+                    return [
+                        'value' => 'dp',
+                        "text" => 'DP'
+                    ];
+                break;
+            case 'lunas':
+                    return [
+                        'value' => 'lunas',
+                        "text" => 'Lunas'
+                    ];
+                break;
+        }
     }
 
-    public function createInvoice(Request $request){
+    public function index(Request $request){
+        
+        $status = $this->statusValidate($request->status);
+        if ($status == false) {
+            return abort(404);
+        }
+        return Inertia::render('Admin/InvoiceManajemen/Index',[
+            'status' => $status
+        ]);
+    }
+
+    public function create(Request $request){
+        $status = $this->statusValidate($request->status);
+        if ($status == false) {
+            return abort(404);
+        }
+        return Inertia::render('Admin/InvoiceManajemen/Create',[
+            'status' => $status
+        ]);
+    }
+
+    public function store(Request $request){
         DB::beginTransaction();
         try{
             $data = $request->validate([

@@ -81,7 +81,8 @@ Route::prefix('panel')
         Route::get('index','index')->name('index');
         Route::get('preview-pdf-file', 'stream')->name('stream');
 
-        Route::post('create','createInvoice')->name('create');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
     });
 });
 

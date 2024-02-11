@@ -22,12 +22,12 @@ class ClientManajemen extends Controller
         })
         ->count();
 
-        $clientActive = User::with('role')
+        $clientActive = User::with('role','subscription')
         ->whereHas('role',function($sub){
             $sub->where('level','client');
         })
         ->whereHas('subscription',function($sub){
-            $sub->where('expired_at','<',date('Y-m-d'));
+            $sub->where('expired_at','>',date('Y-m-d'));
         })
         ->count();
 
@@ -37,7 +37,7 @@ class ClientManajemen extends Controller
         })
         ->where(function($sub){
             $sub->whereHas('subscription',function($subItem){
-                $subItem->where('expired_at','>',date('Y-m-d'));
+                $subItem->where('expired_at','<',date('Y-m-d'));
             })
             ->orWhereDoesntHave('subscription');
         })
