@@ -2,6 +2,14 @@
    <div class=" grid grid-cols-1 w-full gap-6 col-span-3">
         <div class="card bg-white p-6 grid grid-cols-1 gap-6">
             <p class="font-semibold">Lunas</p>
+            <div class="container">
+                <Link :href="route('panel.invoice.create',{_query:{
+                    status: 'lunas'
+                }})" class="btn btn-md btn-primary float-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"/></svg>
+                    Buat Invoice
+                </Link>
+            </div>
 
             <div class="container filter-container flex flex-row justify-between">
                 <div class="inline-flex space-x-2">
