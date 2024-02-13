@@ -25,10 +25,10 @@ return new class extends Migration
             $table->string('d_phone_number')->nullable();
             $table->string('d_email')->nullable();
             $table->text('note')->nullable();
-            $table->decimal('subtotal')->default(0);
-            $table->decimal('discount')->default(0);
-            $table->decimal('tax')->default(0);
-            $table->decimal('total')->default(0);
+            $table->decimal('subtotal',16,2)->default(0);
+            $table->decimal('discount',16,2)->default(0);
+            $table->decimal('tax',16,2)->default(0);
+            $table->decimal('total',16,2)->default(0);
             $table->timestamps();
             $table->foreign('client_id')
             ->on('users')->references('id')->onDelete('Cascade')->onUpdate('Cascade');

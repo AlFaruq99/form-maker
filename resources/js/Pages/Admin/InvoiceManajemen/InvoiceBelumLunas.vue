@@ -61,9 +61,9 @@
                                         <button class="tooltip" data-tip="Bagikan Email">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
                                         </button>
-                                        <button class="tooltip" data-tip="Unduh">
+                                        <a :href="route('panel.invoice.download',item.id)" class="tooltip" data-tip="Unduh">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
-                                        </button>
+                                        </a>
                                     </div>
                                 </td>
                                 <td >
@@ -139,14 +139,31 @@ export default {
     mounted() {
         this.fetchInvoice()
     },
+    watch: {
+        length(){
+            this.fetchInvoice()
+        }
+    },
     methods: {
-        async fetchInvoice(){
+        changePageHandler(urlParam){
+            let url = new URL(urlParam);
+            url.searchParams.set('length', this.length);
+            this.fetchInvoice(url.href);
+        },
+        async fetchInvoice(urlParam){
+
+            let url;
+            if (urlParam) {
+                url =urlParam
+            }else{
+                url  = route('panel.invoice.fetchInvoice',{_query:{
+                    status:'belum_bayar',
+                    length:this.length
+                }})
+            }
+
             try {
-                const response = await axios.get(
-                    route('panel.invoice.fetchInvoice',{_query:{
-                        status:'belum_bayar'
-                    }})
-                )
+                const response = await axios.get(url)
                 .then((result) => {
                     return result
                 }).catch((err) => {
@@ -182,6 +199,7 @@ export default {
 
                 if (response.status == 200) {
                     this.fetchInvoice()
+                    this.selectedInvoice = []
                 }
                 
             } catch (error) {

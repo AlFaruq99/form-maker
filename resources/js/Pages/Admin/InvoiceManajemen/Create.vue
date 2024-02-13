@@ -77,7 +77,7 @@
                                             <textarea class="textarea textarea-bordered rounded-lg max-h-5 mt-2"  v-model="row.description"  placeholder="Ketik deskripsi di sini"></textarea>
                                         </td>
                                         <td><input class="max-w-24 rounded-lg text-center border-inherit" type="number" v-model.number="row.quantity"  placeholder="0"></td>
-                                        <td><input class="max-w-24 rounded-lg text-center border-inherit" type="text" v-model="unit" placeholder="pcs"></td>
+                                        <td><input class="max-w-24 rounded-lg text-center border-inherit" type="text" v-model="row.unit" placeholder="pcs"></td>
                                         <td>
                                             <div class="flex">
                                                 <label class="min-w-10 p-2 min-h-15 text-black border rounded-l-lg my-auto">Rp </label>
@@ -133,8 +133,7 @@
                         </div>
                         <hr>
                         <div class="flex justify-end gap-4">
-                            <button class="btn btn-outline btn-primary" @click="preview">Preview</button>
-                            <button class="btn btn-primary" @click="createHandler">Simpan</button>
+                            <button type="button" class="btn btn-primary" @click="createHandler">Simpan</button>
                         </div>
                     </div>
                 </div>
@@ -181,7 +180,7 @@ export default {
             d_email : null,
             note:null,
             columns: ['No', 'Produk', 'Deskripsi', 'Qty', 'Unit', 'Harga per unit', 'Diskon', 'Pajak', 'Total'],
-            rows: [{ description: '', quantity: null, unit: 'pcs', price: null, discount: null, tax: null }],
+            rows: [{ description: '', quantity: 0, unit: null, price: 0, discount: 0, tax: 0 }],
 
             
         }
@@ -212,7 +211,7 @@ export default {
             this.dueDate = moment(this.dueDate).format('YYYY-MM-DD'); 
         },
         addRow() {
-            this.rows.push({ description: '', quantity: 0, unit: 'pcs', price: 0, discount: 0, tax: 0 });
+            this.rows.push({ description: null, quantity: 0, unit: null, price: 0, discount: 0, tax: 0 });
         },
         deleteRow(index) {
             if (this.rows.length > 1) {
@@ -254,30 +253,32 @@ export default {
                     }
                 )
                 .then((result) => {
-                    this.$refs.toast.show('success','Berhasil membuat invoice!','Data yang anda telah disimpan')
                     return result;
-                }).catch((err) => {
-                    this.$refs.toast.show('error','Gagal membuat invoice!','Terjadi kesalahan membuat faktur')
-                });
+                })
+                console.log(response.status)
+                if (response.status == 200) {
+                    this.$refs.toast.show('success','Berhasil membuat faktur!','Data yang anda telah disimpan')
+                    window.location.href = route('panel.invoice.index');
+                    return
+
+                }else{
+                    this.$refs.toast.show('error','Gagal membuat faktur!','Terjadi kesalahan membuat faktur')
+                }
+                
+
                 setTimeout(() => {
                     this.$refs.toast.hide()
-                    }, 3000);
-                if (resutl.status = 200) {
-                    setTimeout(() => {
-                        window.location.href = route('panel.invoice.index');
-                    }, 3000);
-                }
+                }, 3000);
+                return;
+                
             } catch (error) {
-                this.$refs.toast.show('error','Gagal membuat invoice!','Terjadi kesalahan membuat faktur')
+
+                this.$refs.toast.show('error','Gagal membuat faktur!','Terjadi kesalahan membuat faktur')
                 setTimeout(() => {
-                this.$refs.toast.hide()
+                    this.$refs.toast.hide()
                 }, 3000);
             }
         },
-        preview() {
-            const previewUrl = route('admin.invoice.preview', { id: this.invoice.id });
-            this.$inertia.visit(previewUrl);
-        }  
     },
     computed: {
         grandTotal() {
@@ -290,19 +291,18 @@ export default {
             return this.rows.reduce((acc, row) => acc + (row.quantity * row.price * (row.tax / 100)), 0)
         },
         grandTotalAll(){
-            return this.grandTotal - this.grandTotalDisc + this.grandTotalTax;
+            return (this.grandTotal - this.grandTotalDisc) + this.grandTotalTax;
         }
     },
     mounted() {
-        this.formatDate();
-        
+        this.formatDate(); 
     },
     watch: {
         rows: {
         deep: true,
         handler(newVal) {
             for (let row of newVal) {
-                row.total = row.quantity * row.price - ( row.price * (row.discount / 100) );
+                row.total = (row.quantity * row.price - ( row.price * (row.discount / 100) )) + ( row.price * (row.tax / 100) );
             }
         }
         }

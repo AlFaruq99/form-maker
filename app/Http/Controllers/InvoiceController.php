@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\InvoiceAsset;
+use App\Models\InvoiceFile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use LaravelDaily\Invoices\Invoice;
@@ -148,7 +149,7 @@ class InvoiceController extends Controller
                 'discount' => $data['discount'],
                 'tax' => $data['tax'],
                 'total' => $data['total'],
-                'file_path' => $filePath
+                'file_path' => $filePath??'-'
             ];
 
             $invoiceData = array_filter($invoiceData);
@@ -159,8 +160,8 @@ class InvoiceController extends Controller
                 return [
                     'invoice_id' => $invoice->id,
                     'no_invoice' => $invoiceData['no_invoice'],
-                    'produk' => $item['produk'],
-                    'description' => $item['description'],
+                    'produk' => $item['produk']??'-',
+                    'description' => $item['description']??'-',
                     'qty' => $item['quantity']??0,
                     'unit' => $item['unit']??0,
                     'price' => $item['price']??0,
@@ -174,13 +175,26 @@ class InvoiceController extends Controller
                 InvoiceAsset::create($value);
             }
             
-            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
+            if ($request->hasFile('file')) {
+                $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
+            }else{
+                $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
+            }
+
+            $invoiceFileCreate = InvoiceFile::create([
+                'invoice_id' => $invoice->id,
+                'filename' => $invoiceData['s_company_name'].'_'.$invoiceData['d_company_name'].'.pdf',
+                'path' => $invoiceLink
+            ]);
+
             DB::commit();
             return response()
                 ->json([
                     "message" => 'Berhasil Membuat Invoice',
                     'invoice_link' => $invoiceLink
                 ]);
+
+
         }catch(\Throwable $error){
             DB::rollBack();
             if ($request->hasFile('file')) {
@@ -191,46 +205,43 @@ class InvoiceController extends Controller
         }
     }
 
-    private function createInvoice(array $invoice, array $item, string $filePath) {
+    private function createInvoice(array $invoice, array $item, string $filePath = null) {
         $dari = new Party([
-            'name'          => $invoice['s_company_name'],
-            'phone'         => $invoice['s_phone_number'],
-            'email'         => $invoice['s_email'],
-            'address'       => $invoice['s_company_address'],
+            'name'          => $invoice['s_company_name']??'',
+            'phone'         => $invoice['s_phone_number']??'',
+            'email'         => $invoice['s_email']??'',
+            'address'       => $invoice['s_company_address']??'',
         ]);
         
         $kepada = new Party([
-            'name'          => $invoice['d_company_name'],
-            'address'       => $invoice['s_phone_number'],
-            'email'         => $invoice['d_email'],
-            'address'       => $invoice['d_company_address'],
+            'name'          => $invoice['d_company_name']??'',
+            'phone'       => $invoice['d_phone_number']??'',
+            'email'         => $invoice['d_email']??'',
+            'address'       => $invoice['d_company_address']??'',
         ]);
 
 
         foreach ($item as $key => $value) {
-            $items = [
+            $items[] = 
                 InvoiceItem::make($value['produk'])
                     ->description($value['description'])
                     ->pricePerUnit($value['price'])
                     ->quantity($value['qty'])
-                    ->discountByPercent($value['discount'])
-                    ->taxByPercent($value['tax'])
+                    ->discount(($value['price'] * $value['discount'] / 100))
+                    ->tax(($value['price'] * $value['tax'] / 100))
                     ->subTotalPrice($value['total'])
-            ];
+            ;
         }
         
         $notes = $invoice['note']??'';
+        $status = $this->statusValidate($invoice['status']);
         
-        $invoice = Invoice::make('invoice')
-            ->series('INV')
-            ->sequence(date('Y'))
-            ->delimiter('/')
-            ->id_number(1023)
-            ->status(__('BELUM BAYAR'))
-            ->serialNumberFormat('{SEQUENCE}/{SERIES}/{IDNUMBER}')
+        $invoiceCreate = Invoice::make('invoice')
+            ->serialNumberCustom($invoice['no_invoice'])
+            ->status($status['text'])
             ->seller($dari)
             ->buyer($kepada)
-            ->date(now()->subWeeks(3))
+            ->date(now())
             ->dateFormat('m/d/Y')
             ->payUntilDays(3)
             ->currencySymbol('Rp.')
@@ -238,14 +249,17 @@ class InvoiceController extends Controller
             ->currencyFormat('{SYMBOL}{VALUE}')
             ->currencyThousandsSeparator('.')
             ->currencyDecimalPoint(',')
-            ->filename($dari->name . ' ' . $kepada->name)
+            ->filename($dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice'])
             ->addItems($items)
-            ->notes($notes)
-            ->logo($filePath)
-            ->save('public');
-        
-            $invoice->save('public');
-            $link = Storage::url($dari->name . ' ' . $kepada->name).'.pdf';
+            ->notes($notes);
+            if (isset($filePath)) {
+                $invoiceCreate->logo($filePath);
+            }
+            
+            $invoiceCreate->save('public');
+            
+            $link = Storage::url($dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice']).'.pdf';
+            
             return $link;
     }
 
@@ -297,6 +311,18 @@ class InvoiceController extends Controller
 
     }
 
+    public function download($invoice_id){
+        try {
+            $invoice = InvoiceModel::with('file')->find($invoice_id);
+            if (isset($invoice->file)) {
+                $path = public_path($invoice->file->path);
+               
+                return response()->download($path,$invoice->file->filename??'file.pdf');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
     /**
      * @param Array
      * 

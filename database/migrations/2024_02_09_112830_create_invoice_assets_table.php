@@ -16,10 +16,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('qty')->default(0);
             $table->string('unit')->default(0);
-            $table->integer('price')->default(0);
-            $table->decimal('discount')->default(0);
-            $table->decimal('tax')->default(0);
-            $table->decimal('total')->default(0);
+            $table->decimal('price',16,2)->default(0);
+            $table->decimal('discount',16,2)->default(0);
+            $table->decimal('tax',16,2)->default(0);
+            $table->decimal('total',16,2)->default(0);
             $table->timestamps();
             $table->foreign('invoice_id')
             ->references('id')->on('invoices')

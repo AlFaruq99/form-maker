@@ -33,4 +33,8 @@ class Invoices extends Model
     public function item(){
         return $this->hasMany(InvoiceAsset::class,'invoice_id','id');
     }
+
+    public function file(){
+        return $this->hasOne(InvoiceFile::class,'invoice_id','id');
+    }
 }

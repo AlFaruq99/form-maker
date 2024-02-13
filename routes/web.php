@@ -84,6 +84,7 @@ Route::prefix('panel')
         Route::get('create','create')->name('create');
         Route::post('delete','destroy')->name('destroy');
         Route::post('store','store')->name('store');
+        Route::get('download/{invoice_id}','download')->name('download');
     });
 });
 
