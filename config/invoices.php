@@ -21,14 +21,14 @@ return [
         /*
          * Sequence will be padded accordingly, for ex. 00001
          */
-        'sequence_padding' => 5,
+        'sequence_padding' => 4,
         'delimiter'        => '.',
 
         /*
          * Supported tags {SERIES}, {DELIMITER}, {SEQUENCE}
          * Example: AA.00001
          */
-        'format' => '{SERIES}{DELIMITER}{SEQUENCE}',
+        'format' => '{SERIES}{DELIMITER}{SEQUENCE}{DELIMITER}',
     ],
 
     'currency' => [
@@ -40,7 +40,7 @@ return [
          *
          * Example: Amount in words: Eight hundred fifty thousand sixty-eight EUR and fifteen ct.
          */
-        'fraction' => 'ct.',
+        'fraction' => '',
         'symbol'   => '€',
 
         /*

@@ -22,7 +22,6 @@
                                 </div>
                             </div>
                            <div class="w-full flex flex-col justify-start items-end space-y-2">
-                                <input type="text" v-model="invoice_name" placeholder="Nama Invoice" class="input input-bordered"/>
                                 <p class="text-3xl font-semibold">{{ status.text }}</p>
                            </div>
                         </div>
@@ -72,10 +71,13 @@
                                     <tr v-for="(row, index) in rows" :key="index" class="divide-y">
                                         <td>{{ index + 1 }}</td>
                                         <td>
+                                            <textarea class="textarea textarea-bordered rounded-lg max-h-5 mt-2"  v-model="row.produk"  placeholder="Ketik produk di sini"></textarea>
+                                        </td>
+                                        <td>
                                             <textarea class="textarea textarea-bordered rounded-lg max-h-5 mt-2"  v-model="row.description"  placeholder="Ketik deskripsi di sini"></textarea>
                                         </td>
-                                        <td><input class="max-w-14 rounded-lg text-center border-inherit" type="number" v-model.number="row.quantity"  placeholder="0"></td>
-                                        <td><input class="max-w-14 rounded-lg text-center border-inherit" type="text" v-model="unit" placeholder="pcs"></td>
+                                        <td><input class="max-w-24 rounded-lg text-center border-inherit" type="number" v-model.number="row.quantity"  placeholder="0"></td>
+                                        <td><input class="max-w-24 rounded-lg text-center border-inherit" type="text" v-model="unit" placeholder="pcs"></td>
                                         <td>
                                             <div class="flex">
                                                 <label class="min-w-10 p-2 min-h-15 text-black border rounded-l-lg my-auto">Rp </label>
@@ -84,13 +86,13 @@
                                         </td>
                                         <td>
                                             <div class="flex">
-                                                <input  class="max-w-14 border-inherit rounded-l-lg text-end" type="number" v-model="row.discount" placeholder="0">
+                                                <input  class="max-w-24 border-inherit rounded-l-lg text-end" type="number" v-model="row.discount" placeholder="0">
                                                 <label class="min-w-10 p-2 min-h-15 text-black border rounded-r-lg my-auto">%</label>
                                             </div>
                                         </td>
                                         <td class="flex pt-3">
                                             <div class="flex">
-                                                <input class="max-w-14 border-inherit rounded-l-lg text-end" type="number" v-model.number="row.tax" placeholder="0">
+                                                <input class="max-w-24 border-inherit rounded-l-lg text-end" type="number" v-model.number="row.tax" placeholder="0">
                                                 <label class="min-w-10 p-2 min-h-15 text-black border rounded-r-lg my-auto">%</label>
                                             </div>
                                         </td>
@@ -151,22 +153,26 @@ export default {
         AuthenticatedLayoutAdmin,Head
     },
     props:{
-        status:String
+        status:String,
+        no_invoice:String
     },
     data() {
         return {
             url_file_path: null,
             file:null,
-            transaksiDate: new Date(),
-            dueDate: new Date(),
-            no_invoice: null,
+            no_invoice: this.no_invoice,
+            transaksiDate: moment(),
+            dueDate: moment().add(3,'day'),
+            s_company_name:null,
             s_company_address: null,
             s_phone_number: null,
             s_email: null,
+            d_company_name:null,
             d_company_address:null,
             d_phone_number:null,
             d_email : null,
-            columns: ['No', 'Deskripsi', 'Qty', 'Unit', 'Harga per unit', 'Diskon', 'Pajak', 'Total'],
+            note:null,
+            columns: ['No', 'Produk', 'Deskripsi', 'Qty', 'Unit', 'Harga per unit', 'Diskon', 'Pajak', 'Total'],
             rows: [{ description: '', quantity: null, unit: 'pcs', price: null, discount: null, tax: null }],
 
             
@@ -208,12 +214,12 @@ export default {
         async createHandler() {
             try {
                 const invoiceData = {
-                    no_invoice: this.no_invoice,
-                    transaction_date: this.transaksiDate,
-                    due_date: this.dueDate,
+                    status:this.status.value,
                     file: this.file,
-                    invoice_name: this.invoice_name,
-                    s_company_name: this.s_company_name,
+                    no_invoice: this.no_invoice,
+                    transaksiDate: this.transaksiDate,
+                    dueDate: this.dueDate,
+                    s_company_name:this.s_company_name,
                     s_company_address: this.s_company_address,
                     s_phone_number: this.s_phone_number,
                     s_email: this.s_email,
@@ -222,16 +228,16 @@ export default {
                     d_phone_number: this.d_phone_number,
                     d_email: this.d_email,
                     note: this.note,
+                    rows: this.rows,
                     subtotal: this.grandTotal,
                     discount: this.grandTotalDisc,
                     tax: this.grandTotalTax,
                     total: this.grandTotalAll
                 };
 
-                console.log(invoiceData);
 
                 const response = await axios.post(
-                    route('panel.invoice.create'), 
+                    route('panel.invoice.store'), 
                     invoiceData,
                     {
                         headers: {
@@ -239,7 +245,6 @@ export default {
                         }
                     }
                 );
-                console.log(response);
                 // window.location.href = route('panel.invoice.index');
             } catch (error) {
                 console.log(error);

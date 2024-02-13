@@ -163,15 +163,12 @@
                 
                 <div class="w-full">
 
-                    <div class="container p-6 absolute w-fit right-0"  v-if="$page.props.errors && $page.props.errors.message">
-                        <div role="alert" class="alert shadow-lg bg-white animate-shake">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <div>
-                            <h3 class="font-bold">Tidak ada layanan!</h3>
-                            <div class="text-xs">{{ $page.props.errors.message }}</div>
-                        </div>
-                    </div>
-                    </div>
+                    <Toast
+                    ref="toast"
+                    status="error"
+                    title="Tidak ada layanan!"
+                    :message="errors?.message??null"
+                    />
                     <slot />
                 </div>
             </main>
@@ -187,6 +184,8 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Toast from '@/Components/Toast.vue';
+
 export default {
     components:{
         ApplicationLogo,
@@ -194,20 +193,32 @@ export default {
         DropdownLink,
         NavLink,
         ResponsiveNavLink,
-        Link,
+        Link,Toast
     },
     data() {
         return {
-            showingNavigationDropdown: false
+            showingNavigationDropdown: false,
+            errors:null
         }
     },
+    watch: {
+        errors: {
+            handler(newVal, oldVal) {
+                if (Object.keys(newVal).length > 0) {
+                    this.$refs.toast.show()
+                }
+            },
+            deep: true  // Aktifkan jika Anda ingin memantau perubahan secara rekursif
+        }
+    },  
     props:{
-        message:String
+        message:String,
     },
     mounted() {
         if (this.$page.props.errors) {
+            this.errors = this.$page.props.errors;
             setTimeout(() => {
-                this.$page.props.errors = null
+                this.$refs.toast.hide()
             }, 6000);
         }
     },

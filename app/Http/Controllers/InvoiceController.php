@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\InvoiceAsset;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use LaravelDaily\Invoices\Invoice;
@@ -11,6 +12,8 @@ use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 use App\Models\Invoices as InvoiceModel;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -57,34 +60,66 @@ class InvoiceController extends Controller
         ]);
     }
 
+    
+    /**
+     * @return String
+     */
+    private function createNoInvoice(){
+        $user = User::find(Auth::user()->id);
+        $latestInvoice = InvoiceModel::orderBy('id','Desc')->where('client_id',$user->id)
+        ->first();
+
+        $latestNumber = null;
+        if ($latestInvoice == null) {
+            $latestNumber = 1;
+        } else{
+            $latestNumber = $latestInvoice->id;
+        }
+        $invoiceGenerator = new Invoice();
+    
+        $invoiceGenerator = $invoiceGenerator->series('INV')
+        ->sequence(date('Y'))
+        ->delimiter('/');
+
+        return date('Y')."/INV/$user->id/".$latestNumber;
+    }
+
+    /**
+     * @param Request
+     * @return Inertia
+     */
     public function create(Request $request){
+        $noInvoice = $this->createNoInvoice();
         $status = $this->statusValidate($request->status);
         if ($status == false) {
             return abort(404);
         }
         return Inertia::render('Admin/InvoiceManajemen/Create',[
-            'status' => $status
+            'status' => $status,
+            'no_invoice' => $noInvoice
         ]);
     }
 
     public function store(Request $request){
         DB::beginTransaction();
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = Storage::putFileAs('public', $file, $file->getClientOriginalName());
+        }
         try{
             $data = $request->validate([
+                'status' => 'required|string',
                 'no_invoice' => 'required|string',
-                'transaction_date' => 'required|date',
-                'due_date' => 'required|date',
-                'file' => 'required',
-                'invoice_name' => 'required|string',
-                's_company_name' => 'required|string',
-                's_company_address' => 'required|string',
-                's_phone_number' => 'required|string',
-                's_email' => 'required',
-                'client_id' => 'required',
-                'd_company_name' => 'required|string',
-                'd_company_address' => 'required|string',
-                'd_phone_number' => 'required|string',
-                'd_email' => 'required',
+                'transaksiDate' => 'required|string',
+                'dueDate' => 'required|string',
+                's_company_name' => 'nullable|string',
+                's_company_address' => 'nullable|string',
+                's_phone_number' => 'nullable|string',
+                's_email' => 'nullable|string',
+                'd_company_name' => 'nullable|string',
+                'd_company_address' => 'nullable|string',
+                'd_phone_number' => 'nullable|string',
+                'd_email' => 'nullable|string',
                 'note' => 'nullable|string',
                 'subtotal' => 'nullable|numeric',
                 'discount' => 'nullable|numeric',
@@ -92,17 +127,18 @@ class InvoiceController extends Controller
                 'total' => 'nullable|numeric',
             ]);
 
+            
             $invoiceData = [
+                'status' => $data['status'],
                 'no_invoice' => $data['no_invoice'],
-                'transaction_date' => $data['transaction_date'],
-                'due_date' => $data['due_date'],
-                'file_path' => $data['file'],
+                'transaction_date' => $data['transaksiDate'],
+                'due_date' => $data['dueDate'],
                 'invoice_name' => $data['invoice_name']??null,
                 's_company_name' => $data['s_company_name']??null,
                 's_company_address' => $data['s_company_address']??null,
                 's_phone_number' => $data['s_phone_number']??null,
                 's_email' => $data['s_email']??null,
-                'client_id' => $data['client_id'],
+                'client_id' => Auth::user()->id,
                 'd_company_name' => $data['d_company_name']??null,
                 'd_company_address' => $data['d_company_address']??null,
                 'd_phone_number' => $data['d_phone_number']??null,
@@ -112,32 +148,107 @@ class InvoiceController extends Controller
                 'discount' => $data['discount'],
                 'tax' => $data['tax'],
                 'total' => $data['total'],
+                'file_path' => $filePath
             ];
 
             $invoiceData = array_filter($invoiceData);
-
             $invoice = InvoiceModel::create($invoiceData);
 
+            $invoiceRow = $request->rows;
+            $invoiceItem = array_map(function($item) use($invoiceData,$invoice){
+                return [
+                    'invoice_id' => $invoice->id,
+                    'no_invoice' => $invoiceData['no_invoice'],
+                    'produk' => $item['produk'],
+                    'description' => $item['description'],
+                    'qty' => $item['quantity']??0,
+                    'unit' => $item['unit']??0,
+                    'price' => $item['price']??0,
+                    'discount' => $item['discount']??0,
+                    'tax' => $item['tax']??0,
+                    'total'=> $item['total']??0,
+                ];
+            },$invoiceRow);
 
+            foreach ($invoiceItem as $key => $value) {
+                InvoiceAsset::create($value);
+            }
+            
+            $invoiceLink = $this->createInvoice($invoiceData);
             DB::commit();
             return response()
                 ->json([
                     "message" => 'Berhasil Membuat Invoice',
-                    "invoice_url" => route('invoice.show', ['invoice' => $invoice->id])
+                    'invoice_link' => $invoiceLink
                 ]);
         }catch(\Throwable $error){
             DB::rollBack();
+            if ($request->hasFile('file')) {
+                Storage::delete('public/'.$file->getClientOriginalName());
+            }
             Log::error($error->getMessage());
             throw $error;
         }
     }
 
-    public function stream() {
+
+    public function destroy(Request $request){
+        $idInvoice = $request->list;
+
+        if (!isset($idInvoice) || count($idInvoice) < 1) {
+            return response()
+            ->json([
+                'message' => 'data invoice tidak ditemukan'
+            ],400);
+        }
+
+        try {
+            
+            InvoiceModel::whereIn('id',$idInvoice)
+            ->delete();
+            return response()
+            ->json([
+                'message' => 'data berhasil dihapus'
+            ]);
+        } catch (\Throwable $th) {
+            return response()
+            ->json([
+                'message' => $th->getMessage()
+            ],500);
+        }
+    }
+
+    public function fetchInvoice(Request $request){
+        $status = $this->statusValidate($request->status);
+        $length = $request->length ?? 10;
+
+
+        if ($status == false) {
+            return response()
+            ->json([
+                'message' => 'no data available'
+            ],400);
+        }
+
+
+        $invoice = InvoiceModel::with('item')
+        ->paginate($length);
+
+        return response()
+        ->json($invoice);
+
+    }
+
+    /**
+     * @param Array
+     * 
+     */
+    private function createInvoice(array $invoice) {
         $dari = new Party([
-            'name'          => 'Roosevelt Lloyd',
-            'phone'         => '(520) 318-9486',
+            'name'          => $invoice['s_company_name'],
+            'phone'         => $invoice['s_phone_number'],
+            'email'         => $invoice['s_email'],
             'custom_fields' => [
-                'note'        => 'IDDQD',
                 'business id' => '365#GG',
             ],
         ]);
@@ -153,27 +264,10 @@ class InvoiceController extends Controller
         $items = [
             InvoiceItem::make('Service 1')
                 ->description('Your product or service description')
-                ->pricePerUnit(47.79)
+                ->pricePerUnit(100000)
                 ->quantity(2)
-                ->discount(10),
-            InvoiceItem::make('Service 2')->pricePerUnit(71.96)->quantity(2)->tax(8),
-            InvoiceItem::make('Service 3')->pricePerUnit(4.56),
-            InvoiceItem::make('Service 4')->pricePerUnit(87.51)->quantity(7)->discount(4)->units('kg'),
-            InvoiceItem::make('Service 5')->pricePerUnit(71.09)->quantity(7)->discountByPercent(9),
-            InvoiceItem::make('Service 6')->pricePerUnit(76.32)->quantity(9),
-            InvoiceItem::make('Service 7')->pricePerUnit(58.18)->quantity(3)->discount(3),
-            InvoiceItem::make('Service 8')->pricePerUnit(42.99)->quantity(4)->discountByPercent(3),
-            InvoiceItem::make('Service 9')->pricePerUnit(33.24)->quantity(6)->units('m2'),
-            InvoiceItem::make('Service 11')->pricePerUnit(97.45)->quantity(2),
-            InvoiceItem::make('Service 12')->pricePerUnit(92.82),
-            InvoiceItem::make('Service 13')->pricePerUnit(12.98),
-            InvoiceItem::make('Service 14')->pricePerUnit(160)->units('hours'),
-            InvoiceItem::make('Service 15')->pricePerUnit(62.21)->discountByPercent(5),
-            InvoiceItem::make('Service 16')->pricePerUnit(2.80),
-            InvoiceItem::make('Service 17')->pricePerUnit(56.21),
-            InvoiceItem::make('Service 18')->pricePerUnit(66.81)->discountByPercent(8),
-            InvoiceItem::make('Service 19')->pricePerUnit(76.37),
-            InvoiceItem::make('Service 20')->pricePerUnit(55.80),
+                ->discountByPercent(10),
+            InvoiceItem::make('Service 5')->pricePerUnit(20000)->quantity(1)->discountByPercent(5),
         ];
         
         $notes = [
@@ -183,11 +277,13 @@ class InvoiceController extends Controller
         ];
         $notes = implode("<br>", $notes);
         
-        $invoice = Invoice::make('receipt')
-            ->series('BIG')
+        $invoice = Invoice::make('invoice')
+            ->series('INV')
+            ->sequence(date('Y'))
+            ->delimiter('/')
+            ->id_number(1023)
             ->status(__('BELUM BAYAR'))
-            ->sequence(667)
-            ->serialNumberFormat('{SEQUENCE}/{SERIES}')
+            ->serialNumberFormat('{SEQUENCE}/{SERIES}/{IDNUMBER}')
             ->seller($dari)
             ->buyer($kepada)
             ->date(now()->subWeeks(3))

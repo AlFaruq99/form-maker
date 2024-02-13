@@ -9,11 +9,12 @@ class Invoices extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'no_invoice', 
-        'transaction_date', 
-        'due_date', 
-        'url',
-        'invoice_name',
+        'client_id',
+        'no_invoice',
+        'status',
+        'transaction_date',
+        'due_date',
+        'file_path',
         's_company_name',
         's_company_address',
         's_phone_number',
@@ -26,10 +27,10 @@ class Invoices extends Model
         'subtotal',
         'discount',
         'tax',
-        'total'
+        'total',
     ];
 
-    public function content(){
-        return $this->belongsTo(InvoiceAsset::class,'no_invoice','no_invoice');
+    public function item(){
+        return $this->hasMany(InvoiceAsset::class,'invoice_id','id');
     }
 }
