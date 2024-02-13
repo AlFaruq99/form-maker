@@ -163,12 +163,7 @@
                 
                 <div class="w-full">
 
-                    <Toast
-                    ref="toast"
-                    status="error"
-                    title="Tidak ada layanan!"
-                    :message="errors?.message??null"
-                    />
+                    <Toast/>
                     <slot />
                 </div>
             </main>
@@ -205,7 +200,7 @@ export default {
         errors: {
             handler(newVal, oldVal) {
                 if (Object.keys(newVal).length > 0) {
-                    this.$refs.toast.show()
+                    this.$refs.toast.show('success','Tidak ada layanan!',errors?.message)
                 }
             },
             deep: true  // Aktifkan jika Anda ingin memantau perubahan secara rekursif
@@ -218,7 +213,9 @@ export default {
         if (this.$page.props.errors) {
             this.errors = this.$page.props.errors;
             setTimeout(() => {
-                this.$refs.toast.hide()
+                if (this.$refs.toast) {
+                    this.$refs.toast.hide()
+                }
             }, 6000);
         }
     },

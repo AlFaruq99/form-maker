@@ -4,7 +4,7 @@
             <template #header>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Invoice</h2>
             </template>
-            <div class="py-12">
+            <div class=" relative py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
                     <div class="card bg-white p-4 shadow grid grid-cols-1 gap-6">
                         <div class="grid grid-cols-2 gap-4">
@@ -138,6 +138,13 @@
                         </div>
                     </div>
                 </div>
+                <Toast
+                    class="bottom-0"
+                    ref="toast"
+                    status="error"
+                    title="Tidak ada layanan!"
+                    :message="errors?.message??null"
+                />
             </div>
        </AuthenticatedLayoutAdmin> 
 </template>
@@ -147,10 +154,11 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin.vue';
 import moment from 'moment';
 import axios from 'axios';
+import Toast from '@/Components/Toast.vue';
 
 export default {
     components: {
-        AuthenticatedLayoutAdmin,Head
+        AuthenticatedLayoutAdmin,Head,Toast
     },
     props:{
         status:String,
@@ -244,11 +252,26 @@ export default {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                );
-                // window.location.href = route('panel.invoice.index');
+                )
+                .then((result) => {
+                    this.$refs.toast.show('success','Berhasil membuat invoice!','Data yang anda telah disimpan')
+                    return result;
+                }).catch((err) => {
+                    this.$refs.toast.show('error','Gagal membuat invoice!','Terjadi kesalahan membuat faktur')
+                });
+                setTimeout(() => {
+                    this.$refs.toast.hide()
+                    }, 3000);
+                if (resutl.status = 200) {
+                    setTimeout(() => {
+                        window.location.href = route('panel.invoice.index');
+                    }, 3000);
+                }
             } catch (error) {
-                console.log(error);
-                // console.error('Gagal memasukkan data', error);
+                this.$refs.toast.show('error','Gagal membuat invoice!','Terjadi kesalahan membuat faktur')
+                setTimeout(() => {
+                this.$refs.toast.hide()
+                }, 3000);
             }
         },
         preview() {
@@ -272,6 +295,7 @@ export default {
     },
     mounted() {
         this.formatDate();
+        
     },
     watch: {
         rows: {

@@ -174,7 +174,7 @@ class InvoiceController extends Controller
                 InvoiceAsset::create($value);
             }
             
-            $invoiceLink = $this->createInvoice($invoiceData);
+            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
             DB::commit();
             return response()
                 ->json([
@@ -189,6 +189,64 @@ class InvoiceController extends Controller
             Log::error($error->getMessage());
             throw $error;
         }
+    }
+
+    private function createInvoice(array $invoice, array $item, string $filePath) {
+        $dari = new Party([
+            'name'          => $invoice['s_company_name'],
+            'phone'         => $invoice['s_phone_number'],
+            'email'         => $invoice['s_email'],
+            'address'       => $invoice['s_company_address'],
+        ]);
+        
+        $kepada = new Party([
+            'name'          => $invoice['d_company_name'],
+            'address'       => $invoice['s_phone_number'],
+            'email'         => $invoice['d_email'],
+            'address'       => $invoice['d_company_address'],
+        ]);
+
+
+        foreach ($item as $key => $value) {
+            $items = [
+                InvoiceItem::make($value['produk'])
+                    ->description($value['description'])
+                    ->pricePerUnit($value['price'])
+                    ->quantity($value['qty'])
+                    ->discountByPercent($value['discount'])
+                    ->taxByPercent($value['tax'])
+                    ->subTotalPrice($value['total'])
+            ];
+        }
+        
+        $notes = $invoice['note']??'';
+        
+        $invoice = Invoice::make('invoice')
+            ->series('INV')
+            ->sequence(date('Y'))
+            ->delimiter('/')
+            ->id_number(1023)
+            ->status(__('BELUM BAYAR'))
+            ->serialNumberFormat('{SEQUENCE}/{SERIES}/{IDNUMBER}')
+            ->seller($dari)
+            ->buyer($kepada)
+            ->date(now()->subWeeks(3))
+            ->dateFormat('m/d/Y')
+            ->payUntilDays(3)
+            ->currencySymbol('Rp.')
+            ->currencyCode('IDR')
+            ->currencyFormat('{SYMBOL}{VALUE}')
+            ->currencyThousandsSeparator('.')
+            ->currencyDecimalPoint(',')
+            ->filename($dari->name . ' ' . $kepada->name)
+            ->addItems($items)
+            ->notes($notes)
+            ->logo($filePath)
+            ->save('public');
+        
+            $invoice->save('public');
+            $link = Storage::url($dari->name . ' ' . $kepada->name).'.pdf';
+            return $link;
     }
 
 
@@ -243,65 +301,5 @@ class InvoiceController extends Controller
      * @param Array
      * 
      */
-    private function createInvoice(array $invoice) {
-        $dari = new Party([
-            'name'          => $invoice['s_company_name'],
-            'phone'         => $invoice['s_phone_number'],
-            'email'         => $invoice['s_email'],
-            'custom_fields' => [
-                'business id' => '365#GG',
-            ],
-        ]);
-        
-        $kepada = new Party([
-            'name'          => 'Ashley Medina',
-            'address'       => 'The Green Street 12',
-            'code'          => '#22663214',
-            'custom_fields' => [
-                'order number' => '> 654321 <',
-            ],
-        ]);
-        $items = [
-            InvoiceItem::make('Service 1')
-                ->description('Your product or service description')
-                ->pricePerUnit(100000)
-                ->quantity(2)
-                ->discountByPercent(10),
-            InvoiceItem::make('Service 5')->pricePerUnit(20000)->quantity(1)->discountByPercent(5),
-        ];
-        
-        $notes = [
-            'your multiline',
-            'additional notes',
-            'in regards of delivery or something else',
-        ];
-        $notes = implode("<br>", $notes);
-        
-        $invoice = Invoice::make('invoice')
-            ->series('INV')
-            ->sequence(date('Y'))
-            ->delimiter('/')
-            ->id_number(1023)
-            ->status(__('BELUM BAYAR'))
-            ->serialNumberFormat('{SEQUENCE}/{SERIES}/{IDNUMBER}')
-            ->seller($dari)
-            ->buyer($kepada)
-            ->date(now()->subWeeks(3))
-            ->dateFormat('m/d/Y')
-            ->payUntilDays(14)
-            ->currencySymbol('Rp.')
-            ->currencyCode('IDR')
-            ->currencyFormat('{SYMBOL}{VALUE}')
-            ->currencyThousandsSeparator('.')
-            ->currencyDecimalPoint(',')
-            ->filename($dari->name . ' ' . $kepada->name)
-            ->addItems($items)
-            ->notes($notes)
-            ->logo(public_path('vendor/invoices/sample-logo.png'))
-            ->save('public');
-        
-            $invoice->save('public');
-            $link = Storage::url($dari->name . ' ' . $kepada->name).'.pdf';
-            return $link;
-    }
+    
 }

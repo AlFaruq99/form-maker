@@ -21,19 +21,28 @@
 
 <script>
 export default {
-    props:{ 
-        status:{
-            type:String,
-            default:'none'
-        },
-        title:String,
-        message:String
-    },
+    data() {
+        return {
+            status:null,
+            title:null,
+            message:null,
+        }
+    },  
     mounted() {
         
     },
     methods: {
-        show(){
+        /**
+         * 
+         * @param {String} status 
+         * @param {String} title 
+         * @param {String} message 
+         */
+        show(status, title, message){
+            this.status = status;
+            this.title = title;
+            this.message = message
+
             const classList = this.$refs.toast.classList;
             classList.remove('hidden');
         },
