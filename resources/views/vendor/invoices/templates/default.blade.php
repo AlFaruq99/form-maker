@@ -152,7 +152,7 @@
                     </td>
                     <td class="border-0 pl-0">
                         @if($invoice->status)
-                            <h4 class="text-uppercase cool-gray rotate" style="position: absolute; left: 0;bottom: 50%; font-size:80px;">
+                            <h4 class="text-uppercase cool-gray !rotate" style="position: absolute;  left: 50%; transform: translate(-50%, 0); bottom: 50%; font-size:80px;">
                                 <strong>{{ $invoice->status }}</strong>
                             </h4>
                         @endif
