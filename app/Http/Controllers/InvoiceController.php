@@ -106,9 +106,11 @@ class InvoiceController extends Controller
         try{
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                $filePath = Storage::putFileAs('public', $file, $file->getClientOriginalName());
-                dd($filePath);
+                $tujuan_upload = 'storage';
+                $file->move($tujuan_upload,$file->getClientOriginalName());
             }
+
+            $uploadedFile = Storage::url('public/'.$file->getClientOriginalName());
 
 
             $data = $request->validate([
@@ -151,7 +153,7 @@ class InvoiceController extends Controller
                 'discount' => $data['discount'],
                 'tax' => $data['tax'],
                 'total' => $data['total'],
-                'file_path' => $filePath??'-'
+                'file_path' => $uploadedFile
             ];
 
             $invoiceData = array_filter($invoiceData);
@@ -177,42 +179,48 @@ class InvoiceController extends Controller
                 InvoiceAsset::create($value);
             }
             DB::commit();
-            
-        }catch(\Throwable $error){
-            DB::rollBack();
-            Log::error($error->getMessage());
-            throw $error;
-        }
-
-
-        if ($request->hasFile('file')) {
-            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
-        }else{
-            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
-        }
-
-        try {
-            $invoiceFileCreate = InvoiceFile::create([
-                'invoice_id' => $invoice->id,
-                'filename' => $invoiceData['s_company_name'].'_'.$invoiceData['d_company_name'].'.pdf',
-                'path' => $invoiceLink
-            ]);
-    
             return response()
             ->json([
                 "message" => 'Berhasil Membuat Invoice',
-                'invoice_link' => $invoiceLink
             ]);
-        } catch (\Throwable $th) {
-            if ($request->hasFile('file')) {
-                Storage::delete('public/'.$file->getClientOriginalName());
-            }
-            Log::error($th->getMessage());
+        }catch(\Throwable $error){
+            DB::rollBack();
+            Log::error($error->getMessage());
             return response()
             ->json([
-                'message' => 'data berhasil dibuat, faktur gagal dibuat. Silakan generate faktur dengan klik tombol unduh pada halaman index',
-            ],200);
+                'message' => 'Gagal membuat data',
+            ],500);
         }
+
+
+        // if ($request->hasFile('file')) {
+        //     $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
+        // }else{
+        //     $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
+        // }
+
+        // try {
+        //     $invoiceFileCreate = InvoiceFile::create([
+        //         'invoice_id' => $invoice->id,
+        //         'filename' => $invoiceData['s_company_name'].'_'.$invoiceData['d_company_name'].'.pdf',
+        //         'path' => $invoiceLink
+        //     ]);
+    
+        //     return response()
+        //     ->json([
+        //         "message" => 'Berhasil Membuat Invoice',
+        //         'invoice_link' => $invoiceLink
+        //     ]);
+        // } catch (\Throwable $th) {
+        //     if ($request->hasFile('file')) {
+        //         Storage::delete('public/'.$file->getClientOriginalName());
+        //     }
+        //     Log::error($th->getMessage());
+        //     return response()
+        //     ->json([
+        //         'message' => 'data berhasil dibuat, faktur gagal dibuat. Silakan generate faktur dengan klik tombol unduh pada halaman index',
+        //     ]);
+        // }
         
 
     }
