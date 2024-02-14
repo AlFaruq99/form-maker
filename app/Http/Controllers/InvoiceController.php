@@ -214,8 +214,7 @@ class InvoiceController extends Controller
             foreach ($listId as $key => $value) {
                 $invoice = InvoiceModel::find($value);
                 $invoice->status = $status;
-                $itemRel = $invoice->with('item')->first();
-                $items = $itemRel->item;
+                $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
                 $filePath =  Storage::path($invoice->file_path);
                 $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(),$filePath);
                 $invoice->save();
