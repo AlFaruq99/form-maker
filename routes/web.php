@@ -59,9 +59,7 @@ Route::prefix('panel')
 ->middleware('userlevel:admin')
 ->group(function(){
     
-    Route::get('/dashboard', function () {
-        return Inertia::render('Admin/Dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class,'adminDashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::prefix('user')
     ->name('user.')
