@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\ClientBilling;
 use App\Models\Formulir;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -34,18 +33,20 @@ class DashboardController extends Controller
         $totalClient = User::whereHas('role',function($sub){
             $sub->where('level','client');
         })->withCount('role')->count();
-        $totalFormulir = Formulir::count();
-        
-        $clientBilling = ClientBilling::join('users', 'client_billings.user_id', '=', 'users.id')
-        ->select('users.name', 'users.email', 'client_billings.expired_at')
-        ->orderByDesc('client_billings.expired_at')
+
+        $recentlyUser = User::whereHas('role', function($sub) {
+            $sub->where('level', 'client');
+        })
+        ->orderByDesc('created_at')
         ->limit(5)
         ->get();
 
+
+        $totalFormulir = Formulir::count();
         return Inertia::render('Admin/Dashboard', [
             'totalClient' => $totalClient,
             'totalFormulir' => $totalFormulir,
-            'clientBilling' => $clientBilling
+            'recentlyUser' => $recentlyUser
         ]);        
     }
 }
