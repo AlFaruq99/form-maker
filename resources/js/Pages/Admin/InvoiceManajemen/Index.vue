@@ -4,7 +4,8 @@
             <template #header>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Invoice</h2>
             </template>
-            <div class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8 space-y-6">
+                <p class="font-semibold text-lg">Manajemen Faktur</p>
                 <div class="grid grid-flow-row grid-cols-4 gap-6">
                     <ul class="menu bg-white h-fit rounded-box grid-cols-1 card w-full space-y-4 py-8">
                         

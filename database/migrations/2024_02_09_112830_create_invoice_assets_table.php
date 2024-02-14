@@ -10,18 +10,19 @@ return new class extends Migration
     {
         Schema::create('invoice_assets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('invo_id');
+            $table->unsignedBigInteger('invoice_id');
             $table->string('no_invoice');
-            $table->text('description');
-            $table->integer('qty');
-            $table->string('unit');
-            $table->integer('price');
-            $table->decimal('discount');
-            $table->decimal('tax');
-            $table->integer('total');
+            $table->text('produk');
+            $table->text('description')->nullable();
+            $table->integer('qty')->default(0);
+            $table->string('unit')->default(0);
+            $table->decimal('price',16,2)->default(0);
+            $table->decimal('discount',16,2)->default(0);
+            $table->decimal('tax',16,2)->default(0);
+            $table->decimal('total',16,2)->default(0);
             $table->timestamps();
-            $table->foreign('invo_id')
-            ->references('id')->on('invoice')
+            $table->foreign('invoice_id')
+            ->references('id')->on('invoices')
             ->onDelete('Cascade')->onUpdate('Cascade');
         });
     }

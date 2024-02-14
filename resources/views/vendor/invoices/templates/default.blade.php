@@ -123,7 +123,15 @@
                 border: none !important;
             }
             .cool-gray {
-                color: #6B7280;
+                color: #bebebe;
+            }
+            .rotate {
+
+                transform: rotate(-30deg);
+                -webkit-transform: rotate(-30deg);
+                -moz-transform: rotate(-30deg);
+                -ms-transform: rotate(-30deg);
+                -o-transform: rotate(-30deg);
             }
         </style>
     </head>
@@ -139,16 +147,17 @@
                 <tr>
                     <td class="border-0 pl-0" width="70%">
                         <h4 class="text-uppercase">
-                            <strong>{{ $invoice->name }}</strong>
+                            <strong> Faktur </strong>
                         </h4>
                     </td>
                     <td class="border-0 pl-0">
                         @if($invoice->status)
-                            <h4 class="text-uppercase cool-gray">
+                            <h4 class="text-uppercase cool-gray rotate" style="position: absolute; left: 0;bottom: 50%; font-size:80px;">
                                 <strong>{{ $invoice->status }}</strong>
                             </h4>
                         @endif
-                        <p>{{ __('invoices::invoice.serial') }} <strong>{{ $invoice->getSerialNumber() }}</strong></p>
+
+                        <p>Serial : <strong>{{$invoice->getSerialNumberCustom()}}</strong></p>
                         <p>{{ __('invoices::invoice.date') }}: <strong>{{ $invoice->getDate() }}</strong></p>
                     </td>
                 </tr>
@@ -160,11 +169,11 @@
             <thead>
                 <tr>
                     <th class="border-0 pl-0 party-header" width="48.5%">
-                        {{ __('invoices::invoice.seller') }}
+                        Penjual
                     </th>
                     <th class="border-0" width="3%"></th>
                     <th class="border-0 pl-0 party-header">
-                        {{ __('invoices::invoice.buyer') }}
+                       Pembeli
                     </th>
                 </tr>
             </thead>
@@ -194,6 +203,13 @@
                                 {{ __('invoices::invoice.vat') }}: {{ $invoice->seller->vat }}
                             </p>
                         @endif
+
+                        @if($invoice->seller->email)
+                            <p class="seller-email">
+                                Email: {{ $invoice->seller->email }}
+                            </p>
+                        @endif
+
 
                         @if($invoice->seller->phone)
                             <p class="seller-phone">
@@ -230,6 +246,12 @@
                         @if($invoice->buyer->vat)
                             <p class="buyer-vat">
                                 {{ __('invoices::invoice.vat') }}: {{ $invoice->buyer->vat }}
+                            </p>
+                        @endif
+
+                        @if($invoice->buyer->email)
+                            <p class="buyer-email">
+                                Email: {{ $invoice->buyer->email }}
                             </p>
                         @endif
 

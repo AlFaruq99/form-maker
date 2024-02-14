@@ -9,7 +9,9 @@ class InvoiceAsset extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'invoice_id',
         'no_invoice',
+        'produk',
         'description',
         'qty',
         'unit',
