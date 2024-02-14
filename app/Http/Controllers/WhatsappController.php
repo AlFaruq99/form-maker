@@ -160,4 +160,13 @@ class WhatsappController extends Controller
         }
 
     }
+
+    public function sendMediaMessage(Request $request){
+        try {
+            $user = User::with('wa_instance')->find(Auth::user()->id);
+            dd($user);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }
