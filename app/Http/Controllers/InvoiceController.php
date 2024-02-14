@@ -206,7 +206,23 @@ class InvoiceController extends Controller
     }
 
     public function update(Request $request){
-        
+        try {
+            
+
+            $listId = $request->listId;
+            $status = $request->status;
+            foreach ($listId as $key => $value) {
+                $invoice = InvoiceModel::find($value);
+                $invoice->status = $status;
+                $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
+                $filePath =  Storage::path($invoice->file_path);
+                $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(),$filePath);
+                $invoice->save();
+            }
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     private function createInvoice(array $invoice, array $item, string $filePath = null) {

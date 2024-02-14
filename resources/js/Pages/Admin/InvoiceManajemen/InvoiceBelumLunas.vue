@@ -25,10 +25,10 @@
                     <div class="divider divider-horizontal"></div> 
                     <div class="inline-flex space-x-2">
                         <select v-model="selectedStatus" class="select select-bordered w-full max-w-xs" >
-                            <option value="dp">DP</option>
+                            <option value="dp" selected>DP</option>
                             <option value="lunas">Lunas</option>
                         </select>
-                        <button class="btn bg-emerald-500 text-white">Ubah status</button>
+                        <button @click="updateStatusHandler" class="btn bg-emerald-500 text-white">Ubah status</button>
 
                     </div>
                 </div>
@@ -155,7 +155,7 @@ export default {
             this.fetchInvoice()
         },
         search(newVal){
-            if (newVal != null || newVal == '') {
+            if (newVal != null && newVal != '') {
                 this.fetchInvoice()
             }
         }
@@ -217,6 +217,26 @@ export default {
                 if (response.status == 200) {
                     this.fetchInvoice()
                     this.selectedInvoice = []
+                }
+                
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async updateStatusHandler(){
+            try {
+                const response = await axios.post(
+                    route('panel.invoice.update'),
+                    {
+                        listId: this.selectedInvoice,
+                        status: this.selectedStatus
+                    }
+                )
+                
+                if (response.status == 200) {
+                    this.fetchInvoice()
+                } else {
+                    return
                 }
                 
             } catch (error) {

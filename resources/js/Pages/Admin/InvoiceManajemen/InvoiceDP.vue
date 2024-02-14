@@ -18,11 +18,19 @@
                          <option :value="item" :hidden="item % 25 != 0" v-for="(item, index) in 100" :key="index" >{{ item }}</option>
                      </select>
                  </div>
-                 <div class="w-full inline-flex px-2">
-                     <button class="btn tooltip" @click="massDeleteHandler" data-tip="hapus data" v-show="selectedInvoice.length > 0">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>
-                     </button>
-                 </div>
+                 <div class="w-full inline-flex px-2 space-x-4" v-if="selectedInvoice.length > 0">
+                    <button class="btn tooltip" @click="massDeleteHandler" data-tip="hapus data" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>
+                    </button>
+                    <div class="divider divider-horizontal"></div> 
+                    <div class="inline-flex space-x-2">
+                        <select v-model="selectedStatus" class="select select-bordered w-full max-w-xs" >
+                            <option value="lunas" selected>Lunas</option>
+                        </select>
+                        <button @click="updateStatusHandler" class="btn bg-emerald-500 text-white">Ubah status</button>
+
+                    </div>
+                </div>
                  <div class="inline-flex space-x-2">
                      <input v-model="search" type="text" name="" class="input input-bordered input-md w-full max-w-xs" placeholder="Search...">
                  </div>
@@ -133,16 +141,23 @@
          return {
              invoiceData:[],
              length:10,
-             selectedInvoice:[]
+             selectedInvoice:[],
+             search:null,
+             selectedStatus:null
          }
      },
      mounted() {
          this.fetchInvoice()
      },
      watch: {
-         length(){
-             this.fetchInvoice()
-         }
+        length(){
+            this.fetchInvoice()
+        },
+        search(newVal){
+            if (newVal != null && newVal != '') {
+                this.fetchInvoice()
+            }
+        }
      },
      methods: {
          changePageHandler(urlParam){
@@ -152,16 +167,18 @@
          },
          async fetchInvoice(urlParam){
  
-             let url;
-             if (urlParam) {
-                 url = urlParam
-             }else{
-                 url  = route('panel.invoice.fetchInvoice',{_query:{
-                     status:'dp',
-                     length:this.length
-                 }})
-             }
- 
+            let url;
+            if (urlParam) {
+                url =urlParam
+            }else{
+                url  = route('panel.invoice.fetchInvoice',{_query:{
+                    status : 'dp',
+                    length : this.length,
+                    search : this.search
+                }})
+            }
+
+            
              try {
                  const response = await axios.get(url)
                  .then((result) => {
@@ -205,7 +222,27 @@
              } catch (error) {
                  console.log(error)
              }
-         }
+         },
+         async updateStatusHandler(){
+            try {
+                const response = await axios.post(
+                    route('panel.invoice.update'),
+                    {
+                        listId: this.selectedInvoice,
+                        status: this.selectedStatus
+                    }
+                )
+                
+                if (response.status == 200) {
+                    this.fetchInvoice()
+                } else {
+                    return
+                }
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
      },
  }
  </script>
