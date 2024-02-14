@@ -2,11 +2,15 @@
 import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin.vue';
 import { Head } from '@inertiajs/vue3';
 import TableVue from '@/Components/Table.vue'
+import moment from 'moment';
 defineProps({
     totalClient : Number,
     totalFormulir : Number,
-    clientBilling : Array
+    recentlyUser : Array
 });
+const formatDate = (date) => {
+    return moment(date).format('LLL');
+};
 </script>
 
 <template>
@@ -22,7 +26,7 @@ defineProps({
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-5">
                     <div class="p-6 text-gray-900">You're logged in as admin!</div>
                 </div>
-                <div class="container bg-white shadow rounded-md">
+                <div class="container bg-white shadow rounded-md px-5">
                     <div class="stats w-full">
                         <div class="stat">
                             <div class="stat-figure text-slate-500 shadow p-1 rounded-md">
@@ -47,17 +51,17 @@ defineProps({
                                     <th></th>
                                     <th>Nama</th>
                                     <th>Email</th>
-                                    <th>Expired At</th>
+                                    <th>Created At</th>
                                 </tr>
                             </thead>
                         </template>
                         <template v-slot:body>
                             <tbody>
-                                <tr v-for="(item, index) in clientBilling" :key="index">
+                                <tr v-for="(item, index) in recentlyUser" :key="index">
                                     <th>{{ index + 1 }}</th>
                                     <td>{{ item?.name }}</td>
                                     <td>{{ item?.email }}</td>
-                                    <td>{{ item?.expired_at }}</td>
+                                    <td>{{ formatDate(item?.created_at) }}</td>
                                 </tr>
                             </tbody>
                         </template>
