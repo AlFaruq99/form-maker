@@ -179,6 +179,7 @@ class InvoiceController extends Controller
                 InvoiceAsset::create($value);
             }
             DB::commit();
+            Log::info('Data created',[$invoiceData,$invoiceItem]);
             return response()
             ->json([
                 "message" => 'Berhasil Membuat Invoice',
