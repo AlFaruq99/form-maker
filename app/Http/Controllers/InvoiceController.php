@@ -192,39 +192,8 @@ class InvoiceController extends Controller
                 'message' => 'Gagal membuat data',
             ],500);
         }
-
-
-        // if ($request->hasFile('file')) {
-        //     $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
-        // }else{
-        //     $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
-        // }
-
-        // try {
-        //     $invoiceFileCreate = InvoiceFile::create([
-        //         'invoice_id' => $invoice->id,
-        //         'filename' => $invoiceData['s_company_name'].'_'.$invoiceData['d_company_name'].'.pdf',
-        //         'path' => $invoiceLink
-        //     ]);
-    
-        //     return response()
-        //     ->json([
-        //         "message" => 'Berhasil Membuat Invoice',
-        //         'invoice_link' => $invoiceLink
-        //     ]);
-        // } catch (\Throwable $th) {
-        //     if ($request->hasFile('file')) {
-        //         Storage::delete('public/'.$file->getClientOriginalName());
-        //     }
-        //     Log::error($th->getMessage());
-        //     return response()
-        //     ->json([
-        //         'message' => 'data berhasil dibuat, faktur gagal dibuat. Silakan generate faktur dengan klik tombol unduh pada halaman index',
-        //     ]);
-        // }
-        
-
     }
+
 
     public function update(Request $request){
         try {
@@ -235,9 +204,6 @@ class InvoiceController extends Controller
             foreach ($listId as $key => $value) {
                 $invoice = InvoiceModel::find($value);
                 $invoice->status = $status;
-                $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
-                $filePath =  Storage::path($invoice->file_path);
-                $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(),$filePath);
                 $invoice->save();
             }
 
@@ -300,7 +266,11 @@ class InvoiceController extends Controller
             $invoiceCreate->save('public');
             
             $link = Storage::url($dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice']).'.pdf';
-            
+            $invoiceFileCreate = InvoiceFile::create([
+                'invoice_id' => $invoice['id'],
+                'filename' => $invoice['s_company_name'].'_'.$invoice['d_company_name'].'.pdf',
+                'path' => $link
+            ]);
             return $link;
     }
 
@@ -360,11 +330,10 @@ class InvoiceController extends Controller
     public function download($invoice_id){
         try {
             $invoice = InvoiceModel::with('file')->find($invoice_id);
-            if (isset($invoice->file)) {
-                $path = public_path($invoice->file->path);
-               
-                return response()->download($path,$invoice->file->filename??'file.pdf');
-            }
+            $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
+            $filePath = public_path($invoice->file_path);
+            $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
+            return response()->download(public_path($createInvoice),$invoice->file->filename??'file.pdf');
         } catch (\Throwable $th) {
             throw $th;
         }

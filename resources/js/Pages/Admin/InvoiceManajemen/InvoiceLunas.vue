@@ -1,7 +1,7 @@
 <template>
     <div class=" grid grid-cols-1 w-full gap-6 col-span-3">
          <div class="card bg-white p-6 grid grid-cols-1 gap-6">
-             <p class="font-semibold">DP</p>
+             <p class="font-semibold">Lunas</p>
              <div class="container">
                  <Link :href="route('panel.invoice.create',{_query:{
                      status: 'lunas'
