@@ -6,27 +6,26 @@
             </template>
             <div class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8 space-y-6">
                 <p class="font-semibold text-lg">Manajemen Faktur</p>
-                <div class="grid grid-flow-row grid-cols-4 gap-6">
-                    <ul class="menu bg-white h-fit rounded-box grid-cols-1 card w-full space-y-4 py-8">
-                        
-                        <li class="rounded-md text-neutral-500" :class="{
-                            'bg-blue-600 !text-white' : status.value == 'belum_bayar'
+                <div class="grid grid-flow-row grid-cols-1 gap-6">
+                    <ul class="menu space-x-4 menu-horizontal rounded-md">
+                        <li class="rounded-md text-neutral-900 bg-white shadow" :class="{
+                            '!bg-blue-600 !text-white' : status.value == 'belum_bayar'
                         }">
                             <Link :href="route('panel.invoice.index',{_query:{status:'belum_bayar'}})"> 
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5" viewBox="0 0 16 16"><path fill="currentColor" d="m8.746 8l3.1-3.1a.527.527 0 1 0-.746-.746L8 7.254l-3.1-3.1a.527.527 0 1 0-.746.746l3.1 3.1l-3.1 3.1a.527.527 0 1 0 .746.746l3.1-3.1l3.1 3.1a.527.527 0 1 0 .746-.746zM8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16"/></svg>
                                 Invoice Belum Dibayar
                             </Link>
                         </li>
-                        <li class="rounded-md text-neutral-500" :class="{
-                            'bg-blue-600 !text-white' : status.value == 'dp'
+                        <li class="rounded-md text-neutral-900 bg-white shadow" :class="{
+                            '!bg-blue-600 !text-white' : status.value == 'dp'
                         }">
                             <Link :href="route('panel.invoice.index',{_query:{status:'dp'}})">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M15 16.69V13h1.5v2.82l2.44 1.41l-.75 1.3zM19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2v20l1.5-1.5L6 22l1.5-1.5L9 22l1.58-1.58c.14.19.3.36.47.53A7.001 7.001 0 0 0 21 11.1V2zM11.1 11c-.6.57-1.07 1.25-1.43 2H6v-2zm-2.03 4c-.07.33-.07.66-.07 1c0 .34 0 .67.07 1H6v-2zM18 9H6V7h12zm2.85 7c0 .64-.12 1.27-.35 1.86c-.26.58-.62 1.14-1.07 1.57c-.43.45-.99.81-1.57 1.07c-.59.23-1.22.35-1.86.35c-2.68 0-4.85-2.17-4.85-4.85c0-1.29.51-2.5 1.42-3.43c.93-.91 2.14-1.42 3.43-1.42c2.67 0 4.85 2.17 4.85 4.85"/></svg>
                                 Invoice DP
                             </Link>
                         </li>
-                        <li class="rounded-md text-neutral-500" :class="{
-                            'bg-blue-600 !text-white' : status.value == 'lunas'
+                        <li class="rounded-md text-neutral-900 bg-white shadow" :class="{
+                            '!bg-blue-600 !text-white' : status.value == 'lunas'
                         }">
                             <Link :href="route('panel.invoice.index',{_query:{status:'lunas'}})">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M9 17H6c-.55 0-1-.45-1-1s.45-1 1-1h3c.55 0 1 .45 1 1s-.45 1-1 1m0-4H6c-.55 0-1-.45-1-1s.45-1 1-1h3c.55 0 1 .45 1 1s-.45 1-1 1m0-4H6c-.55 0-1-.45-1-1s.45-1 1-1h3c.55 0 1 .45 1 1s-.45 1-1 1m9.7 2.12l-3.17 3.17c-.39.39-1.03.39-1.42 0l-1.41-1.42a.996.996 0 1 1 1.41-1.41l.71.71l2.47-2.47a.996.996 0 0 1 1.41 0l.01.01c.38.39.38 1.03-.01 1.41"/></svg>
@@ -34,10 +33,9 @@
                             </Link>
                         </li>
                     </ul>
-                    
-                    <InvoiceBelumLunas v-show="status.value == 'belum_bayar'"></InvoiceBelumLunas>
-                    <InvoiceDP v-show="status.value == 'dp'"></InvoiceDP>
-                    <InvoiceLunas v-show="status.value == 'lunas'"></InvoiceLunas>
+                    <InvoiceBelumLunas v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
+                    <InvoiceDP v-if="status.value == 'dp'"></InvoiceDP>
+                    <InvoiceLunas v-if="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>
        </AuthenticatedLayoutAdmin> 

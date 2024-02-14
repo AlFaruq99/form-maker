@@ -82,6 +82,7 @@ Route::prefix('panel')
         Route::get('preview-pdf-file', 'stream')->name('stream');
         Route::get('fetch_invoice','fetchInvoice')->name('fetchInvoice');
         Route::get('create','create')->name('create');
+        Route::post('update','update')->name('update');
         Route::post('delete','destroy')->name('destroy');
         Route::post('store','store')->name('store');
         Route::get('download/{invoice_id}','download')->name('download');

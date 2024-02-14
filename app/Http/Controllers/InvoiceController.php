@@ -205,6 +205,10 @@ class InvoiceController extends Controller
         }
     }
 
+    public function update(Request $request){
+        
+    }
+
     private function createInvoice(array $invoice, array $item, string $filePath = null) {
         $dari = new Party([
             'name'          => $invoice['s_company_name']??'',
@@ -292,8 +296,8 @@ class InvoiceController extends Controller
 
     public function fetchInvoice(Request $request){
         $status = $this->statusValidate($request->status);
+        $search = $request->search??null;
         $length = $request->length ?? 10;
-
 
         if ($status == false) {
             return response()
@@ -304,6 +308,11 @@ class InvoiceController extends Controller
 
 
         $invoice = InvoiceModel::with('item')
+        ->when($search, function($sub) use($search){
+            $sub->where('s_company_name','ilike',"%$search%")
+            ->orwhere('d_company_name','ilike',"%$search%");
+        })
+        ->where('status',$status['value'])
         ->paginate($length);
 
         return response()
