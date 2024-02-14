@@ -103,11 +103,14 @@ class InvoiceController extends Controller
 
     public function store(Request $request){
         DB::beginTransaction();
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = Storage::putFileAs('public', $file, $file->getClientOriginalName());
-        }
         try{
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $filePath = Storage::putFileAs('public', $file, $file->getClientOriginalName());
+                dd($filePath);
+            }
+
+
             $data = $request->validate([
                 'status' => 'required|string',
                 'no_invoice' => 'required|string',
@@ -128,7 +131,6 @@ class InvoiceController extends Controller
                 'total' => 'nullable|numeric',
             ]);
 
-            
             $invoiceData = [
                 'status' => $data['status'],
                 'no_invoice' => $data['no_invoice'],
