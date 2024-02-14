@@ -174,35 +174,45 @@ class InvoiceController extends Controller
             foreach ($invoiceItem as $key => $value) {
                 InvoiceAsset::create($value);
             }
+            DB::commit();
             
-            if ($request->hasFile('file')) {
-                $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
-            }else{
-                $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
-            }
+        }catch(\Throwable $error){
+            DB::rollBack();
+            Log::error($error->getMessage());
+            throw $error;
+        }
 
+
+        if ($request->hasFile('file')) {
+            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem, public_path('storage/'.$file->getClientOriginalName()));
+        }else{
+            $invoiceLink = $this->createInvoice($invoiceData, $invoiceItem);
+        }
+
+        try {
             $invoiceFileCreate = InvoiceFile::create([
                 'invoice_id' => $invoice->id,
                 'filename' => $invoiceData['s_company_name'].'_'.$invoiceData['d_company_name'].'.pdf',
                 'path' => $invoiceLink
             ]);
-
-            DB::commit();
+    
             return response()
-                ->json([
-                    "message" => 'Berhasil Membuat Invoice',
-                    'invoice_link' => $invoiceLink
-                ]);
-
-
-        }catch(\Throwable $error){
-            DB::rollBack();
+            ->json([
+                "message" => 'Berhasil Membuat Invoice',
+                'invoice_link' => $invoiceLink
+            ]);
+        } catch (\Throwable $th) {
             if ($request->hasFile('file')) {
                 Storage::delete('public/'.$file->getClientOriginalName());
             }
-            Log::error($error->getMessage());
-            throw $error;
+            Log::error($th->getMessage());
+            return response()
+            ->json([
+                'message' => 'data berhasil dibuat, faktur gagal dibuat. Silakan generate faktur dengan klik tombol unduh pada halaman index',
+            ],200);
         }
+        
+
     }
 
     public function update(Request $request){
