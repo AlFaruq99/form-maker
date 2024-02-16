@@ -104,14 +104,12 @@ class InvoiceController extends Controller
     public function store(Request $request){
         DB::beginTransaction();
         try{
+
+            $uploadedFile = null;
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                $tujuan_upload = 'storage';
-                $file->move($tujuan_upload,$file->getClientOriginalName());
+                $uploadedFile = Storage::disk('image')->put('',$file);
             }
-
-            $uploadedFile = Storage::url('public/'.$file->getClientOriginalName());
-
 
             $data = $request->validate([
                 'status' => 'required|string',
@@ -242,7 +240,9 @@ class InvoiceController extends Controller
         
         $notes = $invoice['note']??'';
         $status = $this->statusValidate($invoice['status']);
-        
+        $invoiceNameFile = $dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice'];
+
+
         $invoiceCreate = Invoice::make('invoice')
             ->serialNumberCustom($invoice['no_invoice'])
             ->status($status['text'])
@@ -256,19 +256,20 @@ class InvoiceController extends Controller
             ->currencyFormat('{SYMBOL}{VALUE}')
             ->currencyThousandsSeparator('.')
             ->currencyDecimalPoint(',')
-            ->filename($dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice'])
+            ->filename($invoiceNameFile)
             ->addItems($items)
             ->notes($notes);
             if (isset($filePath)) {
                 $invoiceCreate->logo($filePath);
             }
             
-            $invoiceCreate->save('public');
+            $invoiceCreate->save('invoice');
             
-            $link = Storage::url($dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice']).'.pdf';
+            $link = storage_path('app/public/invoice/').$invoiceNameFile.'.pdf';
+
             $invoiceFileCreate = InvoiceFile::create([
                 'invoice_id' => $invoice['id'],
-                'filename' => $invoice['s_company_name'].'_'.$invoice['d_company_name'].'.pdf',
+                'filename' => $invoiceNameFile.'.pdf',
                 'path' => $link
             ]);
             return $link;
@@ -331,9 +332,9 @@ class InvoiceController extends Controller
         try {
             $invoice = InvoiceModel::with('file')->find($invoice_id);
             $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
-            $filePath = public_path($invoice->file_path);
+            $filePath = storage_path('app/public/image/').$invoice->file_path;
             $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
-            return response()->download(public_path($createInvoice),$invoice->file->filename??'file.pdf');
+            return response()->download($createInvoice);
         } catch (\Throwable $th) {
             throw $th;
         }
