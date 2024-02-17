@@ -196,14 +196,17 @@ class InvoiceController extends Controller
 
     public function update(Request $request){
         try {
-            
-
+        
             $listId = $request->listId;
             $status = $request->status;
             foreach ($listId as $key => $value) {
-                $invoice = InvoiceModel::find($value);
+                $invoice = InvoiceModel::with('file')->find($value);
                 $invoice->status = $status;
                 $invoice->save();
+
+                $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
+                $filePath = storage_path('app/public/image/').$invoice->file_path;
+                $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
             }
 
         } catch (\Throwable $th) {
@@ -333,12 +336,8 @@ class InvoiceController extends Controller
         try {
             $invoice = InvoiceModel::with('file')->find($invoice_id);
             $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
-            if ($invoice->file == null) {
-                $filePath = storage_path('app/public/image/').$invoice->file_path;
-                $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
-            }else{
-                $fileInvoice = $invoice->file->path;
-            }
+            $filePath = storage_path('app/public/image/').$invoice->file_path;
+            $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
             return response()->download($fileInvoice);
         } catch (\Throwable $th) {
             throw $th;

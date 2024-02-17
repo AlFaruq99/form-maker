@@ -52,6 +52,6 @@ class User extends Authenticatable
     }
 
     public function wa_instance(){
-        return $this->hasOne(WaUser::class,'id','user_id');
+        return $this->hasOne(WaUser::class,'user_id','id');
     }
 }

@@ -90,9 +90,11 @@ Route::prefix('panel')
 
 
     Route::prefix('whatsapp')
-    ->name('whatsapp')
+    ->name('whatsapp.')
     ->controller(WhatsappController::class)
     ->group(function(){
+        Route::get('index','connectPageAdmin')->name('connectPageAdmin');
+        Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
 });

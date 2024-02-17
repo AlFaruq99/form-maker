@@ -25,6 +25,44 @@ class WhatsappController extends Controller
     }
 
 
+    public function connectPageAdmin(){
+
+        $user = User::with('wa_instance')->find(Auth::user()->id);
+        $access_token = $user->wa_instance->token_access??null;
+        $instance_id = $user->wa_instance->instance_id??null;
+
+        return Inertia::render('Admin/Whatsapp/Index',[
+            "accessTokenParam" => $access_token,
+            'instanceIdParam' => $instance_id
+        ]);
+    }
+
+    public function connectWhatsappSetWebhook(WaWebhookController $waWebhookController, Request $request){
+        try {
+            $instance_id = $request->instance_id;
+            $access_token = $request->access_token;
+
+            WaUser::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                ],
+                [
+                    'instance_id' => $instance_id,
+                    'token_access' => $access_token,
+                ]
+            );
+
+            $response = $waWebhookController->getWebhook($instance_id,$access_token);
+            Log::info('Webhook set user_id::'.Auth::user()->id,$response);
+            return response()
+            ->json([
+                "message" => 'Aplikasi berhasil ditautkan'
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
     public function getInstanceToken(){
         try {
             $client = new Client;
@@ -200,4 +238,5 @@ class WhatsappController extends Controller
             throw $th;
         }
     }
+    
 }
