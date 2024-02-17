@@ -55,7 +55,7 @@ return [
         'invoice' => [
             'driver' => 'local',
             'root' => storage_path('app/public/invoice'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL').'/storage/invoice',
             'visibility' => 'public',
             'throw' => false,
         ],

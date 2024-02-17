@@ -83,7 +83,17 @@ Route::prefix('panel')
         Route::post('update','update')->name('update');
         Route::post('delete','destroy')->name('destroy');
         Route::post('store','store')->name('store');
+        
         Route::get('download/{invoice_id}','download')->name('download');
+        Route::get('send_media','sendMedia')->name('sendMedia');
+    });
+
+
+    Route::prefix('whatsapp')
+    ->name('whatsapp')
+    ->controller(WhatsappController::class)
+    ->group(function(){
+        Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
 });
 

@@ -6,6 +6,7 @@ use App\Models\Formulir;
 use App\Models\User;
 use App\Models\WaUser;
 use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -22,6 +23,7 @@ class WhatsappController extends Controller
             'status-prop' => $status
         ]);
     }
+
 
     public function getInstanceToken(){
         try {
@@ -119,7 +121,7 @@ class WhatsappController extends Controller
         return $response;
     }
 
-    public function sendMessage(Request $request, int $form_id){
+    public function sendMessage(Request $request, int $form_id) : JsonResponse{
 
         try {
             $phone = $request->phone??null;
@@ -138,7 +140,7 @@ class WhatsappController extends Controller
                         "type"=> "text",
                         "message"=> "Jawaban anda telah kami simpan"."\r\n\r\n"."Form-maker: ".$formulir->title."\r\n"."Tanggal ".date('d-M-Y')."\r\n".date('H:i:s'),
                         "instance_id"=> $waInstance->instance_id,
-                        "access_token"=> env('VITE_WA_ACCESS')
+                        "access_token"=> $waInstance->token_access
                     ]
                 )]
             );
@@ -161,10 +163,39 @@ class WhatsappController extends Controller
 
     }
 
-    public function sendMediaMessage(Request $request){
+    public function sendMediaMessage(array $data, string $path){
         try {
-            $user = User::with('wa_instance')->find(Auth::user()->id);
-            dd($user);
+            $waInstance = WaUser::where('user_id',Auth::user()->id)->first();
+            $media_url = $path??'https://pii.or.id/uploads/dummies.pdf';
+            $message = $data['message']??'';
+            $number = $data['number']??'';
+
+            $client = new Client([
+                'headers' => [ 'Content-Type' => 'application/json' ]
+            ]);
+
+            $response = $client->post(env('VITE_TIBOT_API').'/send',
+            ['body' => json_encode(
+                    [
+                        "number"=> $number,
+                        "type"=> "media",
+                        "message"=> "$message",
+                        "instance_id"=> $waInstance->instance_id,
+                        "media_url" => "$media_url",
+                        "access_token"=> $waInstance->token_access
+                    ]
+                )]
+            );
+            $response = json_decode($response->getBody()->getContents());
+            Log::info('Whatsapp sent',[
+                "number"=> $number,
+                "type"=> "media",
+                "message"=> "$message",
+                "instance_id"=> $waInstance->instance_id,
+                "media_url" => "$media_url",
+                "access_token"=> $waInstance->token_access
+            ]);
+            return $response;
         } catch (\Throwable $th) {
             throw $th;
         }

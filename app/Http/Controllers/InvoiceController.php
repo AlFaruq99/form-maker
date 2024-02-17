@@ -14,6 +14,7 @@ use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 use App\Models\Invoices as InvoiceModel;
 use App\Models\User;
+use App\Service\PhoneService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -139,12 +140,12 @@ class InvoiceController extends Controller
                 'invoice_name' => $data['invoice_name']??null,
                 's_company_name' => $data['s_company_name']??null,
                 's_company_address' => $data['s_company_address']??null,
-                's_phone_number' => $data['s_phone_number']??null,
+                's_phone_number' => PhoneService::formatNumber($data['s_phone_number']),
                 's_email' => $data['s_email']??null,
                 'client_id' => Auth::user()->id,
                 'd_company_name' => $data['d_company_name']??null,
                 'd_company_address' => $data['d_company_address']??null,
-                'd_phone_number' => $data['d_phone_number']??null,
+                'd_phone_number' => PhoneService::formatNumber($data['d_phone_number']),
                 'd_email' => $data['d_email']??null,
                 'note' => $data['note']??null,
                 'subtotal' => $data['subtotal'],
@@ -332,16 +333,37 @@ class InvoiceController extends Controller
         try {
             $invoice = InvoiceModel::with('file')->find($invoice_id);
             $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
-            $filePath = storage_path('app/public/image/').$invoice->file_path;
-            $createInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
-            return response()->download($createInvoice);
+            if ($invoice->file == null) {
+                $filePath = storage_path('app/public/image/').$invoice->file_path;
+                $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
+            }else{
+                $fileInvoice = $invoice->file->path;
+            }
+            return response()->download($fileInvoice);
         } catch (\Throwable $th) {
             throw $th;
         }
     }
-    /**
-     * @param Array
-     * 
-     */
     
+
+    public function sendMedia(WhatsappController $whatsappController, Request $request){
+        try {
+            $invoiceId = $request->id;
+            $invoice = InvoiceModel::with('file')
+            ->find($invoiceId);
+            $fileName = $invoice->file->filename;
+
+            $filePath =  Storage::disk('invoice')->url($fileName);
+            
+            $data = $request->all();
+            $whatsappController->sendMediaMessage($data, $filePath);
+            return response()
+            ->json([
+                "message" => 'Berhasil mengirim file'
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+    }
 }

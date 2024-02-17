@@ -11,6 +11,7 @@ class WaUser extends Model
     protected $fillable = [
         'user_id',
         'instance_id',
+        'token_access',
         'last_login',
     ];
 

@@ -2,4 +2,4 @@
 
 namespace App\InterFace;
 
-interface ServiceIntervace{}
+interface ServiceInterface{}
