@@ -6,31 +6,31 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
+        <div class="pt-12 pb-24 sm:py-12">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
 
-                <div class="stats shadow w-fit">
+                <div class="stats sm:shadow w-full overflow-hidden sm:w-fit">
   
                     <div class="stat">
                         <div class="stat-title">Total Client</div>
-                        <div class="stat-value">{{ total_client }}</div>
+                        <div class="stat-value text-base sm:text-4xl">{{ total_client }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     <div class="stat">
                         <div class="stat-title">Active User</div>
-                        <div class="stat-value text-primary">{{ client_active }}</div>
+                        <div class="stat-value text-primary text-base sm:text-4xl">{{ client_active }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     <div class="stat">
                         <div class="stat-title">Inactive User</div>
-                        <div class="stat-value text-error">{{ client_inactive }}</div>
+                        <div class="stat-value text-error text-base sm:text-4xl">{{ client_inactive }}</div>
                         <!-- <div class="stat-desc">21% more than last month</div> -->
                     </div>
                     
                 </div>
 
                 <div class="bg-white card overflow-hidden">
-                    <div class="p-6 text-gray-900 grid grid-cols gap-6">
+                    <div class="p-2 sm:p-6 text-gray-900 grid grid-cols gap-6">
                         <div class="container">
                             <Link :href="route('panel.user.create')" class="btn btn-md btn-primary float-end">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"/></svg>
@@ -38,8 +38,9 @@
                             </Link>
                         </div>
 
-                        <div class="container filter-container flex flex-row justify-between">
-                            <div class="inline-flex space-x-2">
+                        <div class="container filter-container grid grid-cols-1 gap-4
+                        sm:flex sm:flex-row sm:justify-between">
+                            <div class="inline-flex justify-between sm:justify-start space-x-2">
                                 <select class="select select-bordered w-fit max-w-xs" v-model="length">
                                     <option value="10">10</option>
                                     <option :value="item" :hidden="item % 25 != 0" v-for="(item, index) in 100" :key="index" >{{ item }}</option>
@@ -51,7 +52,7 @@
                                 </select>
                             </div>
                             <div class="inline-flex space-x-2">
-                                <input v-model="search" type="text" name="" class="input input-bordered input-md w-full max-w-xs" placeholder="Search...">
+                                <input v-model="search" type="text" name="" class="input input-bordered input-md w-full sm:max-w-xs" placeholder="Search...">
                             </div>
                         </div>
                         <div class="container grid grid-cols-1 gap-6">
@@ -94,11 +95,13 @@
                                     </tbody>
                                 </template>
                             </TableVue>
-                            <div class="w-full flex flex-row justify-between">
+                            <div class="w-full sm:flex sm:flex-row sm:justify-between
+                            grid grid-cols-1 gap-4
+                            ">
                                 <p>
                                     Show {{client.from}} - {{ client.to }} form total {{ client.total }} data
                                 </p>
-                                <div class="join">
+                                <div class="max-sm:hidden join w-fit">
                                     <div v-for="(item, index) in client.links" :key="index">
                                         <button @click="()=>{
                                             changePageHandler(item.url);
@@ -106,7 +109,10 @@
                                             'bg-primary text-white' : item.active
                                         }" v-html="item.label"></button>
                                     </div>
-                                    
+                                </div>
+                                <div class=" w-full join sm:hidden justify-center">
+                                    <button class="join-item btn" @click="changePageHandler(client.prev_page_url)">Prev Page</button>
+                                    <button class="join-item btn" @click="changePageHandler(client.next_page_url)">Next Paget</button>
                                 </div>
                             </div>
                         </div>

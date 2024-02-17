@@ -4,10 +4,10 @@
             <template #header>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Invoice</h2>
             </template>
-            <div class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8 space-y-6">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 grid grid-cols-1 gap-6 pt-12 pb-24 sm:py-12">
                 <p class="font-semibold text-lg">Manajemen Faktur</p>
                 <div class="grid grid-flow-row grid-cols-1 gap-6">
-                    <ul class="menu space-x-4 menu-horizontal rounded-md">
+                    <ul class=" max-sm:hidden menu space-x-4 menu-horizontal rounded-md">
                         <li class="rounded-md text-neutral-900 bg-white shadow" :class="{
                             '!bg-blue-600 !text-white' : status.value == 'belum_bayar'
                         }">

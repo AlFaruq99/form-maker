@@ -104,21 +104,29 @@
                         </tbody>
                     </template>
                 </TableVue>
-                <div class="w-full flex flex-row justify-between">
-                    <p>
-                        Show {{invoiceData.from}} - {{ invoiceData.to }} form total {{ invoiceData.total }} data
-                    </p>
-                    <div class="join">
-                        <div v-for="(item, index) in invoiceData.links" :key="index">
-                            <button @click="()=>{
-                                changePageHandler(item.url);
-                            }" class="join-item btn btn-sm" :class="{
-                                'bg-primary text-white' : item.active
-                            }" v-html="item.label"></button>
+               
+                <div class="w-full sm:flex sm:flex-row sm:justify-between
+                    grid grid-cols-1 gap-4
+                    ">
+                        <p>
+                            Show {{invoiceData.from}} - {{ invoiceData.to }} form total {{ invoiceData.total }} data
+                        </p>
+                        <div class="max-sm:hidden join w-fit">
+                            <div v-for="(item, index) in invoiceData.links" :key="index">
+                                <button @click="()=>{
+                                    changePageHandler(item.url);
+                                }" class="join-item btn btn-sm" :class="{
+                                    'bg-primary text-white' : item.active
+                                }" v-html="item.label"></button>
+                            </div>
                         </div>
-                        
-                    </div>
+                        <div class=" w-full join sm:hidden justify-center">
+                            <button class="join-item btn" @click="changePageHandler(invoiceData.prev_page_url)">Prev Page</button>
+                            <button class="join-item btn" @click="changePageHandler(invoiceData.next_page_url)">Next Paget</button>
+                        </div>
                 </div>
+
+                
             </div>
         </div>
     </div>
