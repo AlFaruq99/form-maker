@@ -1,5 +1,6 @@
 <template>
     <Head title="Activation" />
+    <Toast ref="toast"></Toast>
     <AuthenticatedLayoutAdmin>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">User Activation</h2>
@@ -32,9 +33,11 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayoutAdmin from '@/Layouts/AuthenticatedLayoutAdmin.vue'
 import axios from 'axios';
 import moment from 'moment'
+import Toast from '@/Components/Toast.vue';
+
 export default {
     components:{
-        AuthenticatedLayoutAdmin,Head
+        AuthenticatedLayoutAdmin,Head,Toast
     },
     props:{
         user:Array
@@ -46,10 +49,44 @@ export default {
     },
     methods: {
         async sendActivation(){
-            const response = await axios.post(route('panel.user.activate',{
-                'user_id' : this.user.id,
-                date : moment(this.date).format('YYYY-MM-D')
-            }))
+            try {
+                
+                if (moment(this.date).isAfter(moment.now()) !== true) {
+                    this.$refs.toast.show('error','Gagal menambah langganan','tanggal yang dipilih tidak sesuai')
+                    setTimeout(() => {
+                        this.$refs.toast.hide()
+                    }, 3000);
+                    return;
+                }
+                const response = await axios.post(route('panel.user.activate',{
+                    'user_id' : this.user.id,
+                    date : moment(this.date).format('YYYY-MM-D')
+                }))
+                .then(async (result) => {
+
+                    return result;
+                    
+                }).catch((err) => {
+                    this.$refs.toast.show('error','Gagal menambah langganan','silakan hubungi cs')
+                    setTimeout(() => {
+                        this.$refs.toast.hide()
+                    }, 3000);
+                });
+
+                if (response.status == 200) {
+                    this.$refs.toast.show('success','Berhasil menambah langganan','')
+                    setTimeout(() => {
+                        this.$refs.toast.hide()
+                        window.location.href = route('panel.user.index');
+                    }, 3000);
+
+                }
+            } catch (error) {
+                this.$refs.toast.show('error','Gagal menambah langganan','silakan hubungi cs')
+                setTimeout(() => {
+                    this.$refs.toast.hide()
+                }, 3000);
+            }
         }
     },
 }
