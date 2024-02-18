@@ -48,7 +48,7 @@ class FormulirController extends Controller
             ]);
 
             $uuid = Str::uuid();
-            $randomUrl = Str::random(6);
+            $randomUrl = env('APP_URL').'/'.Str::random(6);
             
             Formulir::create([
                 'uuid' => $uuid,
