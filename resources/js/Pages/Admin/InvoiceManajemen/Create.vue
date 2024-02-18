@@ -7,9 +7,12 @@
             <div class=" relative py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
                     <div class="card bg-white p-4 shadow grid grid-cols-1 gap-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label v-if="!url_file_path" for="dropzone-file" class="cursor-pointer flex flex-col items-center rounded-xl border-2 border-dashed border-blue-400 bg-white py-5 text-center min-h-40">
+                        <div class="grid lg:grid-cols-2 gap-4">
+                            <div class="w-full flex flex-col justify-start items-end space-y-2 lg:order-last">
+                                <p class="text-3xl font-semibold">{{ status.text }}</p>
+                            </div>
+                            <div class="w-full">
+                                <label v-if="!url_file_path" for="dropzone-file" class="lg:order-first sm:order-last cursor-pointer flex flex-col items-center rounded-xl border-2 border-dashed border-blue-400 bg-white py-5 text-center min-h-40">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 448 512" stroke="blue" stroke-width="6">
                                         <path d="M246.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3V320c0 17.7 14.3 32 32 32s32-14.3 32-32V109.3l73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64c0 53 43 96 96 96H352c53 0 96-43 96-96V352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V352z"/>
                                     </svg>
@@ -21,21 +24,18 @@
                                     <button class="rounded-lg btn btn-outline btn-error" v-if="url_file_path" @click="clearUrl">x</button>
                                 </div>
                             </div>
-                           <div class="w-full flex flex-col justify-start items-end space-y-2">
-                                <p class="text-3xl font-semibold">{{ status.text }}</p>
-                           </div>
                         </div>
-                        <div class="grid grid-cols-2 grid-flow-col-dense gap-4">
-                            <div class="flex">
-                                <p class="w-1/4 pt-3">Dari</p>
-                                <div class="w-3/4">
+                        <div class="grid lg:grid-cols-2 lg:grid-flow-col-dense gap-4">
+                            <div class="lg:flex">
+                                <p class="lg:w-1/4 pt-3">Dari</p>
+                                <div class="lg:w-3/4">
                                     <input type="text" v-model="s_company_name" placeholder="Nama Perusahaan Anda *" class="input input-bordered w-full mb-2" />
                                     <input type="text" v-model="s_company_address" placeholder="Alamat Perusahaan Anda *" class="input input-bordered w-full mb-2" />
                                     <input type="text" v-model="s_phone_number" placeholder="No telepon *" class="input input-bordered w-full mb-2" />
                                     <input type="text" v-model="s_email" placeholder="Alamat Email *" class="input input-bordered w-full mb-2" />
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 grid-rows-4">
+                            <div class="grid lg:grid-cols-2 gap-2 lg:grid-rows-4">
                                 <p class="my-auto">No Invoice</p>
                                 <input type="text" v-model="no_invoice" placeholder="001/INV/01/2021" class="input input-bordered" >
                                 <p class="my-auto">Tanggal Transaksi</p>
@@ -45,15 +45,15 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="grid grid-cols-2 grid-flow-col-dense gap-4">
-                            <div class="flex">
-                                <p class="w-1/4 pt-3">Kepada</p>
-                                <div class="w-3/4">
+                        <div class="grid lg:grid-cols-2 lg:grid-flow-col-dense sm:gap-2 lg:gap-4">
+                            <div class="lg:flex">
+                                <p class="lg:w-1/4 pt-3">Kepada</p>
+                                <div class="lg:w-3/4">
                                     <input type="text" v-model="d_company_name" placeholder="Nama Perusahaan *" class="input input-bordered w-full mb-2" />
                                     <input type="text" v-model="d_company_address" placeholder="Alamat Perusahaan *" class="input input-bordered w-full mb-2" />
                                 </div>
                             </div>
-                            <div class="w-3/4 justify-self-end grid grid-rows-2 grid-flow-row-dense">
+                            <div class="lg:w-3/4 lg:justify-self-end grid lg:grid-rows-2 lg:grid-flow-row-dense gap-2">
                                 <input type="text" v-model="d_phone_number" placeholder="No Telepon *" class="input input-bordered" />
                                 <input type="text" v-model="d_email" placeholder="Alamat Email *" class="input input-bordered" />
                             </div>
@@ -109,8 +109,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <button @click="addRow" class="btn btn-outline btn-primary w-1/6">+ Tambah Baris</button>
-                        <div class="grid grid-cols-2 gap-2">
+                        <button @click="addRow" class="btn btn-outline btn-primary lg:w-1/6">+ Tambah Baris</button>
+                        <div class="grid lg:grid-cols-2 gap-2">
                             <div>
                                 <b>Catatan :</b><br>
                                 <textarea v-model="note" class="textarea text-black textarea-bordered min-h-5 max-h-24 w-full" placeholder="Ketik catatan Anda di sini"></textarea>
@@ -202,7 +202,7 @@ export default {
            }
         },
         clearUrl() {
-            this.url = null;
+            this.url_file_path = null;
             const fileInput = document.getElementById('dropzone-file');
             fileInput.value = '';
         },
