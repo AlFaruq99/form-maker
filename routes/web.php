@@ -72,6 +72,8 @@ Route::prefix('panel')
         Route::post('store','store')->name('store');
         Route::post('activate','activate')->name('activate');
     });
+
+
     Route::prefix('invoice')
     ->name('invoice.')
     ->controller(InvoiceController::class)
@@ -128,6 +130,22 @@ Route::prefix('client')
         Route::delete('delete_anwer/{form_id}','destroy')->name('deleteAnswer');
         Route::get('show/{form_id}','show')->name('show');
     });
+
+    Route::prefix('invoice')
+    ->name('invoice.')
+    ->controller(InvoiceController::class)
+    ->group(function(){
+        Route::get('index','clientIndex')->name('clientIndex');
+        Route::get('preview-pdf-file', 'stream')->name('stream');
+        Route::get('fetch_invoice','fetchInvoice')->name('fetchInvoice');
+        Route::get('create','clientCreate')->name('clientCreate');
+        Route::post('update','update')->name('update');
+        Route::post('delete','destroy')->name('destroy');
+        Route::post('store','store')->name('store');
+
+        Route::get('download/{invoice_id}','download')->name('download');
+        Route::get('send_media','sendMedia')->name('sendMedia');
+    });
     
     Route::prefix('wa')
     ->name('wa.')
@@ -135,8 +153,8 @@ Route::prefix('client')
     ->middleware('subscribtion:active')
     ->group(function(){
         Route::get('index','index')->name('index');
-        Route::get('instance_token','getInstanceToken')->name('getInstanceToken');
-        Route::get('check_status','addWebhook')->name('addWebhook');
+        Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
+        Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
 });
 

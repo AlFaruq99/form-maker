@@ -4,26 +4,23 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
-                
-                
-                <div class="bg-white card overflow-hidden p-4 grid grid-cols-1 gap-4">
-                    <div v-if="UserStatus == 'online'" class="grid grid-cols-1 gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-emerald-500" viewBox="0 0 24 24"><path fill="currentColor" d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91c0-2.65-1.03-5.14-2.9-7.01m-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18l-3.12.82l.83-3.04l-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24c2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81c-.23-.08-.39-.12-.56.12c-.17.25-.64.81-.78.97c-.14.17-.29.19-.54.06c-.25-.12-1.05-.39-1.99-1.23c-.74-.66-1.23-1.47-1.38-1.72c-.14-.25-.02-.38.11-.51c.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31c-.22.25-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56c.12.17 1.75 2.67 4.23 3.74c.59.26 1.05.41 1.41.52c.59.19 1.13.16 1.56.1c.48-.07 1.47-.6 1.67-1.18c.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28"/></svg>
-                        <div class="inline-flex items-center space-x-1">
-                            <div class="relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-3 animate-ping text-emerald-500" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2"/></svg> 
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 text-emerald-500" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2"/></svg> 
-                            </div>
-                            <span>online</span>
-                        </div>
+                <p class="font-semibold text-lg">Whatsapp</p>
+                <div class="card bg-white p-6 grid grid-cols-1 gap-4">
+                    <div class="form-group container w-full grid grid-cols-1 gap-2">
+                        <label for="accessToken" class="text-sm font-semibold">Access Token</label>
+                        <input id="accessToken" v-model="accessToken" type="text" class="input input-bordered " placeholder="isi access token anda dari tibot">
                     </div>
-
-
-                    <button @click="getInstance" class="btn btn-primary w-fit">Generate QR Code</button>
-
-                    <img :src="qrCode" />
-                    <btn @click="checkUserStatus" v-if="qrCode != null" class="btn bg-emerald-500 text-white">Periksa status</btn>
+                    <div class="form-group container w-full grid grid-cols-1 gap-2">
+                        <label for="instanceId" class="text-sm font-semibold">Instance Id</label>
+                        <input id="instanceId" v-model="instanceId" type="text" class="input input-bordered " placeholder="isi access token anda dari tibot">
+                    </div>
+                    <button @click="tautkanHandler" class="btn btn-primary"> 
+                        <svg xmlns="http://www.w3.org/2000/svg" v-show="status == 'idle'" class="w-6" viewBox="0 0 24 24"><path fill="currentColor" d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 0 0-7.071-7.071L9.878 7.05L8.464 5.636l1.414-1.414a7 7 0 0 1 9.9 9.9zm-2.829 2.828l-1.414 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 0 0 7.07 7.071l1.415-1.414zm-.707-10.607l1.415 1.415l-7.072 7.07l-1.414-1.414z"/></svg>
+                        <svg v-show="status == 'loading'" xmlns="http://www.w3.org/2000/svg" class="w-8" viewBox="0 0 24 24"><circle cx="18" cy="12" r="0" fill="currentColor"><animate attributeName="r" begin=".67" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="12" r="0" fill="currentColor"><animate attributeName="r" begin=".33" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="6" cy="12" r="0" fill="currentColor"><animate attributeName="r" begin="0" calcMode="spline" dur="1.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle></svg>
+                        Tautkan
+                    </button>
                 </div>
+
             </div>
         </div>
       </AuthenticatedLayout>
@@ -33,42 +30,77 @@
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
+import ToastVue from '@/Components/Toast.vue';
 
 export default {
     components:{
-        Head, AuthenticatedLayout
+        AuthenticatedLayout,ToastVue
     },
     props:{
-        statusProp : String
+        accessTokenParam : String,
+        instanceIdParam : String
     },
     data() {
         return {
-            qrCode:null,
-            UserStatus:'offline'
+            accessToken:null,
+            instanceId:null,
+            status: 'idle',
+            error:Object
         }
     },
     mounted() {
-        this.UserStatus = this.statusProp;
+        this.accessToken = this.accessTokenParam;
+        this.instanceId = this.instanceIdParam;
+    },
+    watch: {
+        error(newVal){
+            console.log(newVal)
+        }
     },
     methods: {
-        async getInstance(){
-            const response = await axios.get(route('client.wa.getInstanceToken'))
-            .then((result) => {
-                return result.data
-            }).catch((err) => {
+        async tautkanHandler(){
+            try {
+                this.status = 'loading'
+
+                setTimeout(async () => {
+                    const response = await axios.get(
+                        route('client.wa.setWebhook',{
+                            _query:{
+                                access_token : this.accessToken,
+                                instance_id : this.instanceId
+                            }
+                        })
+                    )
+                    .then((result) => {
+                        this.status = 'idle'
+                        this.$refs.toast.show('success','Berhasil menyambungkan aplikasi','anda dapat menggunakan pesan whatsapp pada web ini')
+                        setTimeout(() => {
+                            this.$refs.toast.hide();
+                        }, 3000);
+                        
+                    }).catch((err) => {
+                        this.status = 'idle'
+                        this.error = {
+                            message: err.response.data.message
+                        }
+                        this.$refs.toast.show('error','Gagal menyambungkan aplikasi',err.response.data.message)
+                        setTimeout(() => {
+                            this.$refs.toast.hide();
+                        }, 3000);
+                    });
+
+                  
+                    
+                }, 3000)
                 
-            });
-            this.qrCode = response.base64
-        },
-        async checkUserStatus(){
-            const response = await axios.get(route('client.wa.addWebhook'))
-            .then((result) => {
-                this.qrCode = null
-                this.UserStatus = 'online'
-            }).catch((err) => {
-                
-            });
-        },
+            } catch (error) {
+                this.$refs.toast.show('error','Gagal menyambungkan aplikasi',error.response.data.message)
+                setTimeout(() => {
+                    this.$refs.toast.hide();
+                }, 3000);
+            }
+        }
     },
+    
 }
 </script>

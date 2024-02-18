@@ -8,7 +8,6 @@ use App\Models\InvoiceFile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use LaravelDaily\Invoices\Invoice;
-use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 
@@ -22,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
+
     public function statusValidate($status){
         $status = $status??'belum_bayar';
         $statusList = ['belum_bayar','dp','lunas'];
@@ -58,7 +58,21 @@ class InvoiceController extends Controller
             return abort(404);
         }
         return Inertia::render('Admin/InvoiceManajemen/Index',[
-            'status' => $status
+            'status' => $status,
+            'userId' => Auth::user()->id
+        ]);
+    }
+
+
+    public function clientIndex(Request $request){
+        
+        $status = $this->statusValidate($request->status);
+        if ($status == false) {
+            return abort(404);
+        }
+        return Inertia::render('Client/InvoiceManajemen/Index',[
+            'status' => $status,
+            'userId' => Auth::user()->id
         ]);
     }
 
@@ -97,6 +111,18 @@ class InvoiceController extends Controller
             return abort(404);
         }
         return Inertia::render('Admin/InvoiceManajemen/Create',[
+            'status' => $status,
+            'no_invoice' => $noInvoice
+        ]);
+    }
+    
+    public function clientCreate(Request $request){
+        $noInvoice = $this->createNoInvoice();
+        $status = $this->statusValidate($request->status);
+        if ($status == false) {
+            return abort(404);
+        }
+        return Inertia::render('Client/InvoiceManajemen/Create',[
             'status' => $status,
             'no_invoice' => $noInvoice
         ]);
@@ -310,6 +336,7 @@ class InvoiceController extends Controller
         $status = $this->statusValidate($request->status);
         $search = $request->search??null;
         $length = $request->length ?? 10;
+        $userId = $request->user_id;
 
         if ($status == false) {
             return response()
@@ -318,12 +345,13 @@ class InvoiceController extends Controller
             ],400);
         }
 
-
         $invoice = InvoiceModel::with('item')
         ->when($search, function($sub) use($search){
             $sub->where('s_company_name','ilike',"%$search%")
             ->orwhere('d_company_name','ilike',"%$search%");
         })
+        
+        ->where('client_id',$userId)
         ->where('status',$status['value'])
         ->paginate($length);
 

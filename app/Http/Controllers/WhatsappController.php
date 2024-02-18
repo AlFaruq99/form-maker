@@ -17,11 +17,7 @@ class WhatsappController extends Controller
 {
     public function index(){
         $user = User::with('wa_instance')->find(Auth::user()->id);
-        $clientWaStatus = $this->getClientWaStatus();
-        $status = $clientWaStatus->status == 'success' ? 'online' : 'offline';
-        return Inertia::render('Client/Whatsapp/Index',[
-            'status-prop' => $status
-        ]);
+        return Inertia::render('Client/Whatsapp/Index');
     }
 
 

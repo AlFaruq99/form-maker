@@ -38,7 +38,7 @@ export default {
          * @param {String} title 
          * @param {String} message 
          */
-        show(status, title, message){
+    show(status, title, message){
             this.status = status;
             this.title = title;
             this.message = message
