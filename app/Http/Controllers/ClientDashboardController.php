@@ -28,9 +28,15 @@ class ClientDashboardController extends Controller
         ->groupBy(DB::raw("date_part('month',created_at)"))
         ->get();
         
+        $status = "";
         $masaAktif = ClientBilling::select('expired_at')
         ->where('user_id', $user->id)
         ->first();
+        if(!$masaAktif){
+            $status = "inactive";
+        }else{
+            $status = $masaAktif->expired_at;
+        }
 
         $formulir = Formulir::where('user_id', $user->id)
         ->count();
@@ -44,7 +50,7 @@ class ClientDashboardController extends Controller
       
         return Inertia::render('Client/Dashboard',[
             'formulir' => $formulir,
-            'masaAktif' => $masaAktif,
+            'status' => $status,
             'formTerbanyak' => $FormTerbanyak
         ]);
     }
