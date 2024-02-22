@@ -124,7 +124,7 @@ export default {
 
                 const formData = new FormData();
                 formData.append('title',this.title);
-                formData.append('content',this.content);
+                formData.append('content',JSON.stringify(this.content));
                 formData.append('image_background',this.imageFile)
 
                 const response = await axios.post(

@@ -69,7 +69,7 @@ class FormulirController extends Controller
                 'uuid' => $uuid,
                 'user_id' => Auth::user()->id,
                 'title' => $data['title'],
-                'content' => json_encode($data['content']),
+                'content' => json_encode(json_decode($data['content'])),
                 'url' => $randomUrl,
                 'image_background' => $filename
             ]);
