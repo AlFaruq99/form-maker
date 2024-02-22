@@ -15,12 +15,12 @@
                     </div>
                    <div  v-for="(item, index) in content" :key="index">
                         <div class="container formulir-body grid grid-cols-1 border-b pb-4">
-                            <div class="grid grid-flow-row grid-cols-3">
-                                <div class="form-group inline-flex space-x-6 items-center">
+                            <div class="grid grid-flow-row lg:grid-cols-3 gap-4">
+                                <div class="form-group inline-flex space-x-6 items-center w-full">
                                     <span class=" font-semibold">{{ index + 1 }}.</span>
-                                    <input v-model="item.kolom" type="text" class="input input-bordered" placeholder="nama kolom">
+                                    <input v-model="item.kolom" type="text" class="input input-bordered w-full lg:w-3/4 md:w-1/2" placeholder="nama kolom">
                                 </div>
-                                <select v-model="item.tipe" class="select select-bordered w-full max-w-xs">
+                                <select v-model="item.tipe" class="select select-bordered w-1/2 lg:w-full ml-9 lg:ml-0">
                                     <option selected value="text">Text</option>
                                     <option value="option">Option</option>
                                     <option value="multiple">Multiple</option>

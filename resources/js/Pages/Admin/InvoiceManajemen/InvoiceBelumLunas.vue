@@ -121,7 +121,7 @@
                         </div>
                         <div class=" w-full join sm:hidden justify-center">
                             <button class="join-item btn" @click="changePageHandler(invoiceData.prev_page_url)">Prev Page</button>
-                            <button class="join-item btn" @click="changePageHandler(invoiceData.next_page_url)">Next Paget</button>
+                            <button class="join-item btn" @click="changePageHandler(invoiceData.next_page_url)">Next Page</button>
                         </div>
                 </div>
                 
