@@ -1,9 +1,10 @@
 <template>
     <Head :title="formulir.title" />
-    <div class="bg-emerald-700 py-12 min-h-screen">
+    <div :style="backgroundStyle"
+    class="py-12 min-h-screen">
         <div class="max-w-7xl  mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
             
-            <div class="bg-white card overflow-hidden p-4 grid grid-cols-1 gap-6 shadow-md">
+            <div class="bg-white border card overflow-hidden p-4 grid grid-cols-1 gap-6 shadow-lg">
                 <p>{{ formulir.title }}</p>
                 <hr>
                 
@@ -90,7 +91,11 @@ export default {
     data() {
         return {
             Question:Array,
-            errorResponse:String
+            errorResponse:String,
+            backgroundStyle:{
+                'background': `url(${this.formulir.image_background})`,
+                'background-size': 'cover'
+            },
         }
     },
     mounted() {

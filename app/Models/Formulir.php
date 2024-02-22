@@ -13,7 +13,7 @@ class Formulir extends Model
         'user_id',
         'title',
         'content',
-        'background',
+        'image_background',
         'url'
     ];
 

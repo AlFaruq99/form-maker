@@ -1,10 +1,20 @@
 <template>
      <Head title="Buat Form" />
       <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
-                
-                <div class="bg-white card overflow-hidden p-6 grid grid-cols-1 gap-6">
+        <div class="py-12 min-h-screen"
+        :style="backgroundStyle"
+        >
+        
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
+            
+                <div class="bg-white shadow-lg py-12 border card overflow-hidden p-6 grid grid-cols-1 gap-6">
+                    <label for="bacgroundInput" class="btn w-fit bg-blue-400 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="13" r="3"/><path stroke-linecap="round" d="M2 13.364c0-3.065 0-4.597.749-5.697a4.38 4.38 0 0 1 1.226-1.204c.72-.473 1.622-.642 3.003-.702c.659 0 1.226-.49 1.355-1.125A2.064 2.064 0 0 1 10.366 3h3.268c.988 0 1.839.685 2.033 1.636c.129.635.696 1.125 1.355 1.125c1.38.06 2.282.23 3.003.702c.485.318.902.727 1.226 1.204c.749 1.1.749 2.632.749 5.697c0 3.064 0 4.596-.749 5.697a4.408 4.408 0 0 1-1.226 1.204C18.904 21 17.343 21 14.222 21H9.778c-3.121 0-4.682 0-5.803-.735A4.406 4.406 0 0 1 2.75 19.06A3.43 3.43 0 0 1 2.277 18M19 10h-1"/></g></svg>
+                        Ganti background
+                    </label>
+                    <input type="file" @change="(event)=>{
+                        imageChangeHandler(event)
+                    }" id="bacgroundInput" class="hidden">
                     <div class="container form-group grid grid-cols-1 gap-2">
                         <label for="judul" class="text-sm">Judul Formulir</label>
                         <input type="text" v-model="title" class="input input-bordered w-full max-w-xs" placeholder="judul formulir">
@@ -94,19 +104,38 @@ export default {
     components:{
         AuthenticatedLayout,Head, Link
     },
+    props:{
+        defaultImage:String
+    },
     data() {
         return {
             title: 'Draf Formulir',
             content:[],
+            backgroundStyle:{
+                'background': `url(${this.defaultImage})`,
+                'background-size': 'cover'
+            },
+            imageFile:null
         }
     },
     methods: {
         async simpanHandler(){
             try {
-                const response = await axios.post(route('client.form.create',{
-                    title:this.title,
-                    content: this.content
-                }))
+
+                const formData = new FormData();
+                formData.append('title',this.title);
+                formData.append('content',this.content);
+                formData.append('image_background',this.imageFile)
+
+                const response = await axios.post(
+                    route('client.form.create'),
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                )
 
                 if (response.status == 200) {
                     window.location.href = route('client.form.index');
@@ -122,6 +151,19 @@ export default {
             } else {
                 console.log("Invalid index");
             }   
+        },
+        imageChangeHandler(event){
+            const file = event.target.files[0];
+            this.imageFile = file;
+            const reader = new FileReader();
+            var background = this.backgroundStyle;
+            reader.onload = function(e) {
+                background.background = `url(${e.target.result})`;
+                // previewImage.src = e.target.result;
+            }
+
+            reader.readAsDataURL(file);
+            // console.log(reader)
         }
     },
     

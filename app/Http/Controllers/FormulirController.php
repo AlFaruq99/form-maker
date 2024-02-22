@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -35,11 +36,19 @@ class FormulirController extends Controller
     }
 
     public function CreateForm(){
-        return Inertia::render('Client/Formulir/Create');
+        $defaultImage = asset('storage/image/form/default_background.jpg');
+
+        return Inertia::render(
+            'Client/Formulir/Create',
+            [
+                'defaultImage'=> $defaultImage
+            ]
+        );
     }
 
     public function Create(Request $request){
         try {
+            
             $data = $request->validate([
                 'title' => 'required',
                 'content' => 'required',
@@ -49,13 +58,20 @@ class FormulirController extends Controller
 
             $uuid = Str::uuid();
             $randomUrl = env('APP_URL').'/'.Str::random(6);
-            
+            $filename = 'default_background.jpg';
+            if ($request->hasFile('image_background')) {
+                $file = $data['image_background'];
+                $moveFile = Storage::put('public/image/form',$file);
+                $filename = basename($moveFile);
+            }
+
             Formulir::create([
                 'uuid' => $uuid,
                 'user_id' => Auth::user()->id,
                 'title' => $data['title'],
                 'content' => json_encode($data['content']),
-                'url' => $randomUrl
+                'url' => $randomUrl,
+                'image_background' => $filename
             ]);
 
             ShortLink::create([
