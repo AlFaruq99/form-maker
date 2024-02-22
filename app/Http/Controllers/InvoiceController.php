@@ -337,7 +337,6 @@ class InvoiceController extends Controller
         $search = $request->search??null;
         $length = $request->length ?? 10;
         $userId = $request->user_id;
-
         if ($status == false) {
             return response()
             ->json([
@@ -360,13 +359,27 @@ class InvoiceController extends Controller
 
     }
 
+    public function invoicePath($invoiceId){
+        $invoice = InvoiceModel::with('file')->find($invoiceId);
+        if (!isset($invoice->file)) {
+            $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
+            $filePath = storage_path('app/public/image/').$invoice->file_path;
+            $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
+            return $this->invoicePath($invoiceId);
+        }
+        $invoicePath = Storage::disk('invoice')->url($invoice->file->filename);
+        return $invoicePath;
+    }
+
     public function download($invoice_id){
         try {
+            
             $invoice = InvoiceModel::with('file')->find($invoice_id);
             $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
             $filePath = storage_path('app/public/image/').$invoice->file_path;
             $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
             return response()->download($fileInvoice);
+            
         } catch (\Throwable $th) {
             throw $th;
         }

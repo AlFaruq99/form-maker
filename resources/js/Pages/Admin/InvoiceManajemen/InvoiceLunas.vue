@@ -128,6 +128,9 @@
      components:{
          TableVue, Head, Link,Toast
      },
+     props:{
+        userId:Number
+     },
      data() {
          return {
              invoiceData:[],
@@ -159,6 +162,7 @@
          changePageHandler(urlParam){
              let url = new URL(urlParam);
              url.searchParams.set('length', this.length);
+             url.searchParams.set('user_id', this.userId);
              this.fetchInvoice(url.href);
          },
          async fetchInvoice(urlParam){
@@ -170,7 +174,8 @@
                  url  = route('panel.invoice.fetchInvoice',{_query:{
                      status : 'lunas',
                      length : this.length,
-                     search : this.search
+                     search : this.search,
+                     user_id: this.userId
                  }})
              }
  

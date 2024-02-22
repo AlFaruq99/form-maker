@@ -65,10 +65,9 @@
                                 <td>
                                     <div class="inline-flex space-x-2">
                                         <button @click="sendWhastappMedia(item)" class="tooltip" data-tip="Bagikan Whatsapp">
-                                            <svg xmlns="http://www.w3.org/2000/svg" v-show="status.type =='loading' && status.itemId == item.id" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-dasharray="15" stroke-dashoffset="15" stroke-linecap="round" stroke-width="2" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" v-show="status.type == 'idle'" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91c0-2.65-1.03-5.14-2.9-7.01m-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18l-3.12.82l.83-3.04l-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24c2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81c-.23-.08-.39-.12-.56.12c-.17.25-.64.81-.78.97c-.14.17-.29.19-.54.06c-.25-.12-1.05-.39-1.99-1.23c-.74-.66-1.23-1.47-1.38-1.72c-.14-.25-.02-.38.11-.51c.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31c-.22.25-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56c.12.17 1.75 2.67 4.23 3.74c.59.26 1.05.41 1.41.52c.59.19 1.13.16 1.56.1c.48-.07 1.47-.6 1.67-1.18c.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91c0-2.65-1.03-5.14-2.9-7.01m-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18l-3.12.82l.83-3.04l-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24c2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81c-.23-.08-.39-.12-.56.12c-.17.25-.64.81-.78.97c-.14.17-.29.19-.54.06c-.25-.12-1.05-.39-1.99-1.23c-.74-.66-1.23-1.47-1.38-1.72c-.14-.25-.02-.38.11-.51c.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31c-.22.25-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56c.12.17 1.75 2.67 4.23 3.74c.59.26 1.05.41 1.41.52c.59.19 1.13.16 1.56.1c.48-.07 1.47-.6 1.67-1.18c.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28"/></svg>
                                         </button>
-                                        <button class="tooltip" data-tip="Bagikan Email">
+                                        <button @click="sendMailMedia(item)" class="tooltip" data-tip="Bagikan Email">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
                                         </button>
                                         <a :href="route('panel.invoice.download',item.id)" class="tooltip" data-tip="Unduh">
@@ -125,11 +124,11 @@
                             <button class="join-item btn" @click="changePageHandler(invoiceData.next_page_url)">Next Paget</button>
                         </div>
                 </div>
-
                 
             </div>
         </div>
     </div>
+    
     <Toast 
     ref="toast"
     />
@@ -141,9 +140,14 @@ import TableVue from '@/Components/Table.vue'
 import axios from 'axios'
 import moment from 'moment'
 import Toast from '@/Components/Toast.vue'
+
+
 export default {
     components:{
         TableVue, Head, Link,Toast
+    },
+    props:{
+        userId:Number
     },
     data() {
         return {
@@ -152,10 +156,7 @@ export default {
             selectedInvoice:[],
             search:null,
             selectedStatus:null,
-            status:{
-                itemId:null,
-                type:'idle'
-            }
+            status:'idle'
         }
     },
     mounted() {
@@ -176,18 +177,20 @@ export default {
         changePageHandler(urlParam){
             let url = new URL(urlParam);
             url.searchParams.set('length', this.length);
+            url.searchParams.set('user_id', this.userId);
             this.fetchInvoice(url.href);
         },
         async fetchInvoice(urlParam){
 
             let url;
             if (urlParam) {
-                url =urlParam
+                url = urlParam
             }else{
                 url  = route('panel.invoice.fetchInvoice',{_query:{
                     status : 'belum_bayar',
                     length : this.length,
-                    search : this.search
+                    search : this.search,
+                    user_id: this.userId
                 }})
             }
 
@@ -276,10 +279,11 @@ export default {
         async sendWhastappMedia(item){
             try {
 
-                this.status = {
-                    itemId:item.id,
-                    type:'loading'
-                };
+                this.$emit('sending',{
+                    isOpen : true,
+                    status:'loading',
+                    message : 'Mengirim pesan ke tujuan'
+                });
                 
                 await axios.get(
                     route('panel.invoice.sendMedia',{
@@ -288,32 +292,99 @@ export default {
                     })
                 )
                 .then((result) => {
-                    console.log(result)
-                    this.status = {
-                        itemId:null,
-                        type:'idle'
-                    };
+                    
+                    this.$emit('sending',{
+                        isOpen : false,
+                    });
                     this.$refs.toast.show('success','Behasil mengirim faktur ke wa tujuan','konfirmasi pada nomor tujuan bahwa faktur telah dikirimkan')
+                    
                     setTimeout(() => {
                         this.$refs.toast.hide()
                     }, 5000);
+
+
                 }).catch((err) => {
-                    console.log(err)
-                    this.status = {
-                        itemId:null,
-                        type:'idle'
-                    };
+                    
+                    this.$emit('sending',{
+                        isOpen : true,
+                        status:'error',
+                        message : 'Gagal mengirim pesan ke tujuan'
+                    });
                     this.$refs.toast.show('error','Gagal mengirim faktur ke wa tujuan','coba beberapa saat lagi atau hubungi cs')
                     setTimeout(() => {
-                        this.$refs.toast.hide()
+                        this.$refs.toast.hide();
+                        this.$emit('sending',{
+                            isOpen : false,
+                        });
                     }, 5000);
+
+
                 });
+
+
+                
             } catch (error) {
+                this.$emit('sending',{
+                    isOpen : true,
+                    status:'error',
+                    message : 'Gagal mengirim pesan ke tujuan'
+                });
                 this.$refs.toast.show('error','Gagal mengirim faktur ke wa tujuan','coba beberapa saat lagi atau hubungi cs')
                 setTimeout(() => {
-                    this.$refs.toast.hide()
+                    this.$refs.toast.hide();
+                    this.$emit('sending',{
+                        isOpen : false,
+                    });
                 }, 5000);
             }
+        },
+        async sendMailMedia(item){
+            this.$emit('sending',{
+                isOpen : true,
+                status:'loading',
+                message : 'Mengirim email ke tujuan'
+            });
+
+            try {
+                const response = await axios.post(
+                    route('panel.mail.sendInvoice'),
+                    {
+                        'id' : item['id'],
+                        'from_name' : item['s_company_name'],
+                        'from_email' : item['s_email'],
+                        'recipient' : item['d_email'],
+                        'subject' : 'noreply',
+                        'content' : 'Lampiran Faktur',
+                    }
+                );
+            } catch (error) {
+                this.$emit('sending',{
+                    isOpen : false,
+                });
+            }
+
+
+            // setTimeout(() => {
+            //     this.$emit('sending',{
+            //         isOpen : true,
+            //         status:'success',
+            //         message : 'Berhasil mengirim email ke tujuan'
+            //     });
+            // }, 5000);
+
+            // setTimeout(() => {
+            //     this.$emit('sending',{
+            //         isOpen : true,
+            //         status:'error',
+            //         message : 'Gagal mengirim email ke tujuan'
+            //     });
+            // }, 10000);
+
+            // setTimeout(() => {
+            //     this.$emit('sending',{
+            //         isOpen : false,
+            //     });
+            // }, 15000);
         }
     },
 }

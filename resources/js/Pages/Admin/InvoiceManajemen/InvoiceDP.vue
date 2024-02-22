@@ -136,6 +136,9 @@
      components:{
          TableVue, Head, Link,Toast
      },
+     props:{
+        userId:Number
+    },
      data() {
          return {
              invoiceData:[],
@@ -165,9 +168,10 @@
      },
      methods: {
          changePageHandler(urlParam){
-             let url = new URL(urlParam);
-             url.searchParams.set('length', this.length);
-             this.fetchInvoice(url.href);
+            let url = new URL(urlParam);
+            url.searchParams.set('length', this.length);
+            url.searchParams.set('user_id', this.userId);
+            this.fetchInvoice(url.href);
          },
          async fetchInvoice(urlParam){
  
@@ -178,7 +182,8 @@
                  url  = route('panel.invoice.fetchInvoice',{_query:{
                      status : 'dp',
                      length : this.length,
-                     search : this.search
+                     search : this.search,
+                     user_id: this.userId
                  }})
              }
  

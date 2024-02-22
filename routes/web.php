@@ -8,6 +8,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\FormAnswerController;
 use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\GuestFormulirController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WhatsappController;
 use App\Models\FormAnswer;
@@ -98,6 +99,13 @@ Route::prefix('panel')
         Route::get('index','connectPageAdmin')->name('connectPageAdmin');
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
+    });
+
+    Route::prefix('mail')
+    ->name('mail.')
+    ->controller(MailController::class)
+    ->group(function(){
+        Route::post('send_invoice','sendInvoice')->name('sendInvoice');
     });
 });
 
