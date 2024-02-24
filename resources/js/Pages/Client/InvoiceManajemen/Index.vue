@@ -33,11 +33,14 @@
                             </Link>
                         </li>
                     </ul>
-                    <InvoiceBelumLunas :user-id="userId" v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
-                    <InvoiceDP :user-id="userId" v-if="status.value == 'dp'"></InvoiceDP>
-                    <InvoiceLunas :user-id="userId" v-if="status.value == 'lunas'"></InvoiceLunas>
+                    <InvoiceBelumLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
+                    <InvoiceDP @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'dp'"></InvoiceDP>
+                    <InvoiceLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>
+            <BottomPopUp v-if="statusPopUp.isOpen" :status="statusPopUp.status" >
+                {{ statusPopUp.message }}
+            </BottomPopUp>
        </AuthenticatedLayout> 
 </template>
 
@@ -49,10 +52,13 @@ import InvoiceDP from './InvoiceDP.vue';
 import InvoiceLunas from './InvoiceLunas.vue';
 import moment from 'moment';
 import axios from 'axios';
+import BottomPopUp from '@/Components/BottomPopUp.vue';
+
 
 export default {
     components: {
-        AuthenticatedLayout,Head,Link,InvoiceBelumLunas,InvoiceDP,InvoiceLunas
+        AuthenticatedLayout,Head,Link,InvoiceBelumLunas,InvoiceDP,InvoiceLunas,
+        BottomPopUp
     },
     props:{
         status:String,
@@ -73,8 +79,11 @@ export default {
             d_email : null,
             columns: ['No', 'Deskripsi', 'Qty', 'Unit', 'Harga per unit', 'Diskon', 'Pajak', 'Total'],
             rows: [{ description: '', quantity: null, unit: 'pcs', price: null, discount: null, tax: null }],
-
-            
+            statusPopUp:{
+                isOpen:false,
+                status:'idle',
+                message:null
+            }
         }
     },
     methods: {

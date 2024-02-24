@@ -129,7 +129,7 @@ export default {
         async postAnswerHandler(){
 
             const filteredArray = this.formValidation(this.Question.content);
-
+            
             if (filteredArray == true) {
                 const response = await axios.post(route('guest.post_formulir'),{
                     'formulir_id' : this.Question.id,

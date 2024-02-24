@@ -100,7 +100,6 @@ Route::prefix('panel')
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
-
     Route::prefix('mail')
     ->name('mail.')
     ->controller(MailController::class)
@@ -128,6 +127,7 @@ Route::prefix('client')
         Route::get('responder_list','responderList')->name('responderList');
         Route::post('create','Create')->name('create');
         Route::delete('delete/{form_id}','delete')->name('delete');
+        Route::get('export_excel','exportExcel')->name('exportExcel');
     });
 
     Route::prefix('form_answer')
@@ -163,6 +163,13 @@ Route::prefix('client')
         Route::get('index','index')->name('index');
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
+    });
+
+    Route::prefix('mail')
+    ->name('mail.')
+    ->controller(MailController::class)
+    ->group(function(){
+        Route::post('send_invoice','sendInvoice')->name('sendInvoice');
     });
 });
 

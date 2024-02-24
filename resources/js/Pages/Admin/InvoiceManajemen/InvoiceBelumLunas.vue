@@ -357,34 +357,33 @@ export default {
                         'content' : 'Lampiran Faktur',
                     }
                 );
+
+                if (response.status == '200') {
+                    
+                    setTimeout(() => {
+                        this.$emit('sending',{
+                            isOpen : true,
+                            status:'success',
+                            message : 'Berhasil mengirim email ke tujuan'
+                        },1000);
+                    });
+                }
             } catch (error) {
-                this.$emit('sending',{
-                    isOpen : false,
-                });
+                setTimeout(() => {
+                    this.$emit('sending',{
+                        isOpen : true,
+                        status:'error',
+                        message : 'Gagal mengirim email ke tujuan'
+                    });
+                }, 1000);
             }
 
 
-            // setTimeout(() => {
-            //     this.$emit('sending',{
-            //         isOpen : true,
-            //         status:'success',
-            //         message : 'Berhasil mengirim email ke tujuan'
-            //     });
-            // }, 5000);
-
-            // setTimeout(() => {
-            //     this.$emit('sending',{
-            //         isOpen : true,
-            //         status:'error',
-            //         message : 'Gagal mengirim email ke tujuan'
-            //     });
-            // }, 10000);
-
-            // setTimeout(() => {
-            //     this.$emit('sending',{
-            //         isOpen : false,
-            //     });
-            // }, 15000);
+            setTimeout(() => {
+                this.$emit('sending',{
+                    isOpen : false,
+                });
+            }, 5000);
         }
     },
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ResponderExport;
 use App\Models\FormAnswer;
 use App\Models\Formulir;
 use App\Models\ShortLink;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 use function Laravel\Prompts\search;
 
@@ -138,6 +140,49 @@ class FormulirController extends Controller
         } catch (\Throwable $th) {
             return abort(404);
         }
+    }
+
+    public function exportExcel(Request $request){
         
+        try {
+            $now = date('dmY');
+            $requestData = $request->validate([
+                'id' => 'required|numeric'
+            ]);
+
+            $invoiceAnswer = FormAnswer::where('formulir_id',$requestData['id'])
+            ->get();
+
+            $data = array_map(function($item){
+                $jsonData = json_decode($item['answer']);
+
+                $answerArray = [];
+                foreach ($jsonData as $key => $value) {
+                    
+                    if ($value->tipe != 'file') {
+                        $answerArray[] = [
+                            'kolom' => $value->kolom,
+                            'answer' => $value->answer,
+                        ];
+                    }else{
+                        $url = asset($value->path);
+
+                        $answerArray[] = [
+                            'kolom' => $value->kolom,
+                            'answer' => $url,
+                        ];
+                    }
+                }
+                return $answerArray;
+            },$invoiceAnswer->toArray());
+            return Excel::download(new ResponderExport(collect($data)),"responder_$now.xlsx");
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()
+            ->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
+
     }
 }

@@ -34,8 +34,8 @@
                         </li>
                     </ul>
                     <InvoiceBelumLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
-                    <InvoiceDP :user-id="userId" v-if="status.value == 'dp'"></InvoiceDP>
-                    <InvoiceLunas :user-id="userId" v-if="status.value == 'lunas'"></InvoiceLunas>
+                    <InvoiceDP @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'dp'"></InvoiceDP>
+                    <InvoiceLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>
             <BottomPopUp v-if="statusPopUp.isOpen" :status="statusPopUp.status" >
