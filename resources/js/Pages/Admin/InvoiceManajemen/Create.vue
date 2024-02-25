@@ -8,9 +8,6 @@
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
                     <div class="card bg-white p-4 shadow grid grid-cols-1 gap-6">
                         <div class="grid lg:grid-cols-2 gap-4">
-                            <div class="w-full flex flex-col justify-start items-end space-y-2 lg:order-last">
-                                <p class="text-3xl font-semibold">{{ status.text }}</p>
-                            </div>
                             <div class="w-full">
                                 <label v-if="!url_file_path" for="dropzone-file" class="lg:order-first sm:order-last cursor-pointer flex flex-col items-center rounded-xl border-2 border-dashed border-blue-400 bg-white py-5 text-center min-h-40">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 448 512" stroke="blue" stroke-width="6">

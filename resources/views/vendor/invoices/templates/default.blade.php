@@ -151,7 +151,7 @@
                         </h4>
                     </td>
                     <td class="border-0 pl-0">
-                        @if($invoice->status)
+                        @if($invoice->status && $invoice->status !== 'Belum Bayar')
                             <h4 class="text-uppercase cool-gray !rotate" style="position: absolute;  left: 50%; transform: translate(-50%, 0) rotate(-30deg); bottom: 50%; font-size:80px;">
                                 <strong>{{ $invoice->status }}</strong>
                             </h4>
