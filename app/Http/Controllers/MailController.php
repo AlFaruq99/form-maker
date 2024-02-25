@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MailRequest;
 use GuzzleHttp\Client;
+use Inertia\Inertia;
 
 class MailController extends Controller
 {
