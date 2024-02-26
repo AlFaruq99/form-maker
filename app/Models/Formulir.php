@@ -14,7 +14,9 @@ class Formulir extends Model
         'title',
         'content',
         'image_background',
-        'url'
+        'url',
+        'description',
+        'message'
     ];
 
     public function user(){

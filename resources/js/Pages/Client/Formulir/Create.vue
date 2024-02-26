@@ -15,6 +15,16 @@
                     <input type="file" @change="(event)=>{
                         imageChangeHandler(event)
                     }" id="bacgroundInput" class="hidden">
+                    <div class="container grid grid-cols-2 gap-2">
+                        <div>
+                            <label for="deskripsi" class="text-sm">Pesan</label>
+                            <textarea v-model="message" class="textarea text-black textarea-bordered min-h-5 max-h-24 w-full" placeholder="Ketik pesan Anda di sini"></textarea>
+                        </div>
+                        <div>
+                            <label for="deskripsi" class="text-sm">Deskripsi</label>
+                            <textarea v-model="description" class="textarea text-black textarea-bordered min-h-5 max-h-24 w-full" placeholder="Ketik deskripsi Anda di sini"></textarea>
+                        </div>
+                    </div>
                     <div class="container form-group grid grid-cols-1 gap-2">
                         <label for="judul" class="text-sm">Judul Formulir</label>
                         <input type="text" v-model="title" class="input input-bordered w-full max-w-xs" placeholder="judul formulir">
@@ -123,6 +133,8 @@ export default {
             try {
 
                 const formData = new FormData();
+                formData.append('message',this.message);
+                formData.append('description',this.description);
                 formData.append('title',this.title);
                 formData.append('content',JSON.stringify(this.content));
                 formData.append('image_background',this.imageFile)

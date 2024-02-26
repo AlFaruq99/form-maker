@@ -56,6 +56,8 @@ class FormulirController extends Controller
                 'content' => 'required',
                 'image_background' => 'nullable',
                 'image_color' => 'nullable',
+                'message' => 'nullable',
+                'description' => 'nullable'
             ]);
 
             $uuid = Str::uuid();
@@ -73,7 +75,9 @@ class FormulirController extends Controller
                 'title' => $data['title'],
                 'content' => json_encode(json_decode($data['content'])),
                 'url' => $randomUrl,
-                'image_background' => $filename
+                'image_background' => $filename,
+                'message' => $data['message'],
+                'description' => $data['description']
             ]);
 
             ShortLink::create([
