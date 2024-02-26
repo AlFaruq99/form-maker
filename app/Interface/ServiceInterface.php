@@ -1,5 +1,5 @@
 <?php
 
-namespace App\InterFace;
+namespace App\Interface;
 
 interface ServiceInterface{}

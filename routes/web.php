@@ -29,16 +29,18 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [DashboardController::class,'welcomePage']);
 
 
+Route::middleware('guest')->get('/', [DashboardController::class,'welcomePage']);
 Route::controller(AuthController::class)
+->middleware('guest')
 ->group(function(){
     Route::get('login','login')->name('login');
     Route::get('register','register')->name('register');
     Route::post('authenticate','authenticate')->name('authenticate');
-    Route::post('logout','logout')->name('logout');
 });
+
+Route::post('logout',[AuthController::class,'logout'])->name('logout');
 
 Route::middleware('guest')
 ->group(function(){

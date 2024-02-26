@@ -6,6 +6,9 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
                 <p class="font-semibold text-lg">Whatsapp</p>
                 <div class="card bg-white p-6 grid grid-cols-1 gap-4">
+                    <p>
+                        Untuk mendapatkan ID dan Token silahkan mendaftar di TIBOT. Link <a class="link font-semibold text-blue-500" href="https://app.tibot.biz.id">https://app.tibot.biz.id</a>
+                    </p>
                     <div class="form-group container w-full grid grid-cols-1 gap-2">
                         <label for="accessToken" class="text-sm font-semibold">Access Token</label>
                         <input id="accessToken" v-model="accessToken" type="text" class="input input-bordered " placeholder="isi access token anda dari tibot">

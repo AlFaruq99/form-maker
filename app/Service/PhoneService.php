@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\InterFace\ServiceInterface;
+use App\Interface\ServiceInterface;
 
 class PhoneService implements ServiceInterface{
     

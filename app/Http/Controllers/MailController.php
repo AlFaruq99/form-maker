@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MailRequest;
 use GuzzleHttp\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class MailController extends Controller
 {
@@ -18,48 +17,35 @@ class MailController extends Controller
     }
 
     private function send(MailRequest $request, string $filePath){
-        $params = $request->all();
+        try {
+            $params = $request->all();
 
-        $client = new Client();
+            $client = new Client();
+            $headers = [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ];
+            $request = $client->request('POST', env('VITE_API_MAILKETING').'/v1/send', [
+                'headers' => $headers,
+                'form_params' => [
+                    'api_token' => env('VITE_MAILKETING_TOKEN'),
+                    'from_name' => $params['from_name'],
+                    'from_email' => $params['from_email'],
+                    'recipient' => $params['recipient'],
+                    'subject' => $params['subject'],
+                    'content' => $params['content'],
+                    'attach1' => $filePath
+                ]
+            ]);
 
-        $request = $client->request('POST', env('VITE_API_MAILKETING').'/v1/send', [
-            'multipart' => [
-                [
-                    'name' => 'api_token',
-                    'contents' => env('VITE_MAILKETING_TOKEN')
-                ],
-                [
-                    'name'     => 'from_name',
-                    'contents' => $params['from_name'],
-                ],
-                [
-                    'name'     => 'from_email',
-                    'contents' => $params['from_email']
-                ],
-                [
-                    'name' => 'recipient',
-                    'contents' => $params['recipient']
-                ],
-                [
-                    'name' => 'subject',
-                    'contents' => $params['subject']
-                ],
-                [
-                    'name' => 'content',
-                    'contents' => $params['content']
-                ],
-                [
-                    'name' => 'attach1',
-                    'contents' => $filePath
-                ],
-            ]
-        ]);
-
-        $response = $request->getBody()->getContents();
-        Log::info($response);
-        return response()
-        ->json([
-            "message" => 'Berhasil mengirim email'
-        ]);
+            $response = $request->getBody()->getContents();
+            
+            
+            return response()
+            ->json([
+                "message" => 'Berhasil mengirim email'
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

@@ -324,7 +324,6 @@
                 );
 
                 if (response.status == '200') {
-                    
                     setTimeout(() => {
                         this.$emit('sending',{
                             isOpen : true,
