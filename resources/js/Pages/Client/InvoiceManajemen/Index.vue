@@ -35,12 +35,15 @@
                     </ul>
                     <InvoiceBelumLunas @sending="(response)=>{ statusPopUp = response }" 
                         :user-id="userId" 
+                        :level="level"
                         v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
                     <InvoiceDP @sending="(response)=>{ statusPopUp = response }" 
                         :user-id="userId" 
+                        :level="level"
                         v-if="status.value == 'dp'"></InvoiceDP>
                     <InvoiceLunas @sending="(response)=>{ statusPopUp = response }" 
                         :user-id="userId" 
+                        :level="level"
                         v-if="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>

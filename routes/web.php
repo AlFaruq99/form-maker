@@ -183,14 +183,6 @@ Route::prefix('client')
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
-
-    Route::prefix('mail')
-    ->name('mail.')
-    ->controller(MailController::class)
-    ->group(function(){
-        Route::get('page','sendMailPage')->name('sendMailPage');
-        Route::post('send_invoice','sendInvoice')->name('sendInvoice');
-    });
 });
 
 Route::prefix('guest')

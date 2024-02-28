@@ -252,15 +252,9 @@ export default {
                 .then((result) => {
                     return result;
                 })
-                console.log(response.status)
-                if (response.status == 200) {
-                    this.$refs.toast.show('success','Berhasil membuat faktur!','Data yang anda telah disimpan')
-                    window.location.href = route('client.invoice.index');
-                    return
-
-                }else{
-                    this.$refs.toast.show('error','Gagal membuat faktur!','Terjadi kesalahan membuat faktur')
-                }
+                
+                this.$refs.toast.show('success','Berhasil membuat faktur!','Data yang anda telah disimpan')
+                window.location.href = route('client.invoice.clientIndex');
                 
 
                 setTimeout(() => {
@@ -269,7 +263,7 @@ export default {
                 return;
                 
             } catch (error) {
-
+                console.log(error)
                 this.$refs.toast.show('error','Gagal membuat faktur!','Terjadi kesalahan membuat faktur')
                 setTimeout(() => {
                     this.$refs.toast.hide()

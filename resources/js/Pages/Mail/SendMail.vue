@@ -70,6 +70,9 @@ export default {
                 case 'admin':
                         url = route('panel.mail.sendInvoice');
                     break;
+                case 'client':
+                        url = route('client.mail.sendInvoice');
+                    break;
             
                 default:
                     break;
@@ -91,7 +94,7 @@ export default {
                 
                 this.state = 'loading'
                 setTimeout(() => {
-                    window.location.href = route(this.userRole == 'admin'? 'panel.invoice.index' : 'client.invoice.index');
+                    window.location.href = route(this.userRole == 'admin'? 'panel.invoice.index' : 'client.invoice.clientIndex');
                 }, 3000);
                 
             } catch (error) {
