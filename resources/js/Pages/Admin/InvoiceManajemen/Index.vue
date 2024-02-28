@@ -33,9 +33,21 @@
                             </Link>
                         </li>
                     </ul>
-                    <InvoiceBelumLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
-                    <InvoiceDP @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'dp'"></InvoiceDP>
-                    <InvoiceLunas @sending="(response)=>{ statusPopUp = response }" :user-id="userId" v-if="status.value == 'lunas'"></InvoiceLunas>
+                    <InvoiceBelumLunas 
+                    @sending="(response)=>{ statusPopUp = response }" 
+                    :user-id="userId" 
+                    :level="level"
+                    v-if="status.value == 'belum_bayar'"></InvoiceBelumLunas>
+                    <InvoiceDP 
+                    @sending="(response)=>{ statusPopUp = response }" 
+                    :user-id="userId" 
+                    :level="level"
+                    v-if="status.value == 'dp'"></InvoiceDP>
+                    <InvoiceLunas 
+                    @sending="(response)=>{ statusPopUp = response }" 
+                    :user-id="userId" 
+                    :level="level"
+                    v-if="status.value == 'lunas'"></InvoiceLunas>
                 </div>
             </div>
             <BottomPopUp v-if="statusPopUp.isOpen" :status="statusPopUp.status" >
@@ -61,7 +73,8 @@ export default {
     },
     props:{
         status:String,
-        userId:Number
+        userId:Number,
+        level:String
     },
     data() {
         return {

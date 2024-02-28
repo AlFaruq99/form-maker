@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceController extends Controller
 {
 
+
     public function statusValidate($status){
         $status = $status??'belum_bayar';
         $statusList = ['belum_bayar','dp','lunas'];
@@ -59,10 +60,10 @@ class InvoiceController extends Controller
         }
         return Inertia::render('Admin/InvoiceManajemen/Index',[
             'status' => $status,
-            'userId' => Auth::user()->id
+            'userId' => Auth::user()->id,
+            'level' => Auth::user()->role->level??null,
         ]);
     }
-
 
     public function clientIndex(Request $request){
         
@@ -72,7 +73,8 @@ class InvoiceController extends Controller
         }
         return Inertia::render('Client/InvoiceManajemen/Index',[
             'status' => $status,
-            'userId' => Auth::user()->id
+            'userId' => Auth::user()->id,
+            'level' => Auth::user()->role->level??null,
         ]);
     }
 

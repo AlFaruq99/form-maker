@@ -29,7 +29,7 @@ use Inertia\Inertia;
 |
 */
 
-
+$prefixUser = ['panel','client','guest'];
 
 Route::middleware('guest')->get('/', [DashboardController::class,'welcomePage']);
 Route::controller(AuthController::class)
@@ -102,13 +102,30 @@ Route::prefix('panel')
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
     });
-    Route::prefix('mail')
-    ->name('mail.')
-    ->controller(MailController::class)
-    ->group(function(){
-        Route::post('send_invoice','sendInvoice')->name('sendInvoice');
-    });
+   
+  
 });
+
+
+foreach ($prefixUser as $key => $prefix) {
+
+    if ($prefix === 'panel') {
+        $middleware = ['userlevel:admin'];
+    }else if($prefix === 'client'){
+        $middleware = ['userlevel:client','subscribtion:active'];
+    }
+    Route::prefix($prefix)->name($prefix.'.')
+    ->middleware($middleware)
+    ->group(function(){
+        Route::prefix('mail')
+        ->name('mail.')
+        ->controller(MailController::class)
+        ->group(function(){
+            Route::get('page/{id}','sendMailPage')->name('sendMailPage');
+            Route::post('send_invoice','sendInvoice')->name('sendInvoice');
+        });
+    });
+}
 
 Route::prefix('client')
 ->name('client.')
@@ -171,6 +188,7 @@ Route::prefix('client')
     ->name('mail.')
     ->controller(MailController::class)
     ->group(function(){
+        Route::get('page','sendMailPage')->name('sendMailPage');
         Route::post('send_invoice','sendInvoice')->name('sendInvoice');
     });
 });

@@ -3,11 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MailRequest;
+use App\Models\Invoices;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use LaravelDaily\Invoices\Facades\Invoice;
 
 class MailController extends Controller
 {
+
+    public function sendMailPage(int $id){
+        $userRole = Auth::user()->role->level;
+        $invoice = Invoices::with('file')->where('id',$id)
+        ->first();
+
+        return Inertia::render(
+            'Mail/SendMail',
+            [
+                'userRole' => $userRole,
+                'data' => $invoice
+            ]
+        );
+    }
 
     public function sendInvoice(InvoiceController $invoiceController, MailRequest $request){
         $params = $request->all();
@@ -38,14 +56,16 @@ class MailController extends Controller
             ]);
 
             $response = $request->getBody()->getContents();
-            
-            
+            Log::info('',json_decode($response,true));
             return response()
-            ->json([
-                "message" => 'Berhasil mengirim email'
-            ]);
+            ->json(json_decode($response,true));
+            
         } catch (\Throwable $th) {
-            throw $th;
+            Log::error($th->getMessage());
+            return response()
+                ->json([
+                    "message" => 'Gagal mengirim email'
+                ],500);
         }
     }
 }
