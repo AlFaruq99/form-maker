@@ -7,6 +7,7 @@
             <div class="bg-white border card overflow-hidden p-4 grid grid-cols-1 gap-6 shadow-lg">
                 <p>{{ formulir.title }}</p>
                 <hr>
+                <p>{{ formulir.description }}</p>
                 
                 <div class="mt-2" v-for="(item, index) in Question.content" :key="index">
                     <div class="container form-group space-y-1">
@@ -146,12 +147,13 @@ export default {
                     const phoneNumberGuest = this.Question.content.filter((item) => {
                         return item.tipe == 'phone'
                     });
-                    let number = phoneNumberGuest[0].answer;
+                    var responseSendWa = true;
+                    if (phoneNumberGuest.length > 0) {
+                        let number = phoneNumberGuest[0].answer;
+                        responseSendWa = await this.sendResponseWaHandler(number);
+                    }
                     
-                    
-                    var responseSendWa = await this.sendResponseWaHandler(number);
-                    
-                    if (responseSendWa) {
+                    if (responseSendWa != false) {
                         setTimeout(() => {
                             window.location.href = route('guest.responsePage',{
                                 'form_id' : this.Question.uuid
@@ -183,7 +185,7 @@ export default {
 
                 return response;
             } catch (error) {
-                console.log(error)
+                return false;
             }
         }
        

@@ -7,6 +7,9 @@
                 <div class="bg-white card overflow-hidden p-4 grid grid-cols-1 gap-6">
                     <p>{{ formulir.title }}</p>
                     <hr>
+                    <div>
+                        <p>{{ formulir.description }}</p>
+                    </div>
                     <div class="mt-2" v-for="(item, index) in formulir.content" :key="index">
                         
                         <div class="container form-group space-y-1">

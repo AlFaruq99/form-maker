@@ -32,6 +32,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink 
                                 class="text-white"
                                 :href="route('panel.dashboard')" :active="route().current('dashboard')">
+                                    <img class="w-10 mr-2" src="/storage/webLogo.png" alt="">
                                     Dashboard
                                 </NavLink>
                             </div>

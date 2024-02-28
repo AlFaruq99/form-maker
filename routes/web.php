@@ -10,6 +10,7 @@ use App\Http\Controllers\FormulirController;
 use App\Http\Controllers\GuestFormulirController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WebConfigController;
 use App\Http\Controllers\WhatsappController;
 use App\Models\FormAnswer;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,7 @@ use Inertia\Inertia;
 */
 
 $prefixUser = ['panel','client','guest'];
-
+Route::get('logo',[WebConfigController::class,'getLogoPath'])->name('getLogoPath');
 Route::middleware('guest')->get('/', [DashboardController::class,'welcomePage']);
 Route::controller(AuthController::class)
 ->middleware('guest')
