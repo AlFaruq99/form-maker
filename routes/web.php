@@ -162,6 +162,7 @@ Route::prefix('client')
     Route::prefix('invoice')
     ->name('invoice.')
     ->controller(InvoiceController::class)
+    ->middleware('subscribtion:active')
     ->group(function(){
         Route::get('index','clientIndex')->name('clientIndex');
         Route::get('preview-pdf-file', 'stream')->name('stream');
