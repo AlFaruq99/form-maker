@@ -1,25 +1,3 @@
-<script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-
-const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-});
-
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-};
-</script>
-
 <template>
     <GuestLayout>
         <Head title="Register" />
@@ -86,6 +64,22 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
+            <div class="mt-4">
+                <InputLabel for="password_confirmation" value="Whatsapp Number" />
+
+                <TextInput
+                    id="whatsapp_number"
+                    @input="changePhoneValueHandler($event)"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.whatsapp_number"
+                    required
+                    placeholder="+628xx-xxxx-xxxx"
+                />
+
+                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+            </div>
+
             <div class="flex items-center justify-end mt-4">
                 <Link
                     :href="route('login')"
@@ -101,3 +95,49 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<script>
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import PhoneNumber from '@/PhoneNumber.js'
+import axios from 'axios';
+
+export default {
+    components:{
+        GuestLayout,
+        InputError,
+        InputLabel,
+        PrimaryButton,
+        TextInput,
+        Head,
+        Link,
+    },
+    data() {
+        return {
+            form : useForm({
+                name: '',
+                email: '',
+                password: '',
+                password_confirmation: '',
+                whatsapp_number: '',
+            })
+        }
+    }, 
+    methods: {
+        async submit(){
+            this.form.post(route('registerProcess'), {
+                onFinish: () => form.reset('password'),
+            });
+        },
+        changePhoneValueHandler(component){
+            var item = component.target;
+            const numberVal = new PhoneNumber().formatPhoneNumber(item.value);
+            this.form.whatsapp_number = numberVal;
+        },
+    },
+}
+</script>

@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'wa_number'
     ];
 
     /**
@@ -53,5 +54,9 @@ class User extends Authenticatable
 
     public function wa_instance(){
         return $this->hasOne(WaUser::class,'user_id','id');
+    }
+
+    public function mail_token(){
+        return $this->hasOne(UserMailConfig::class,'user_id','id');
     }
 }

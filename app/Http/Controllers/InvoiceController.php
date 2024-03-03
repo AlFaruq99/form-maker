@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use LaravelDaily\Invoices\Invoice;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use Illuminate\Support\Str;
 
 use App\Models\Invoices as InvoiceModel;
 use App\Models\User;
@@ -272,7 +273,8 @@ class InvoiceController extends Controller
         
         $notes = $invoice['note']??'';
         $status = $this->statusValidate($invoice['status']);
-        $invoiceNameFile = $dari->name . '_' . $kepada->name.'_'.$invoice['no_invoice'];
+        $noInvoiceChanger = Str::replace('/', '_', $invoice['no_invoice']);
+        $invoiceNameFile = $dari->name . '_' . $kepada->name.'_'.$noInvoiceChanger;
 
 
         $invoiceCreate = Invoice::make('invoice')
@@ -291,6 +293,7 @@ class InvoiceController extends Controller
             ->filename($invoiceNameFile)
             ->addItems($items)
             ->notes($notes);
+            
             if (isset($filePath)) {
                 $invoiceCreate->logo($filePath);
             }
@@ -381,6 +384,20 @@ class InvoiceController extends Controller
             $filePath = storage_path('app/public/image/').$invoice->file_path;
             $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
             return response()->download($fileInvoice);
+            
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function preview($invoice_id){
+        try {
+            
+            $invoice = InvoiceModel::with('file')->find($invoice_id);
+            $items = InvoiceAsset::where('invoice_id',$invoice->id)->get();
+            $filePath = storage_path('app/public/image/').$invoice->file_path;
+            $fileInvoice = $this->createInvoice($invoice->toArray(), $items->toArray(), $filePath);
+            return response()->file($fileInvoice);
             
         } catch (\Throwable $th) {
             throw $th;

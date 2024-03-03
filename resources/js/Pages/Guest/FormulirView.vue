@@ -5,10 +5,9 @@
         <div class="max-w-7xl  mx-auto sm:px-6 lg:px-8 grid grid-cols-1 gap-6">
             
             <div class="bg-white border card overflow-hidden p-4 grid grid-cols-1 gap-6 shadow-lg">
-                <p>{{ formulir.title }}</p>
-                <hr>
-                <p>{{ formulir.description }}</p>
-                
+                <p class="text-xl font-bold">{{ formulir.title }}</p>
+                <p class=" font-thin">{{ formulir.description }}</p>
+                <div class="divider"></div>
                 <div class="mt-2" v-for="(item, index) in Question.content" :key="index">
                     <div class="container form-group space-y-1">
                         <!-- {{ item }} -->

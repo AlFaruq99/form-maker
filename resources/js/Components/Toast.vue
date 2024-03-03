@@ -1,5 +1,5 @@
 <template>
-    <div ref="toast" class="hidden container p-6 absolute w-fit right-0">
+    <div ref="toast" class="z-50 hidden container p-6 absolute w-fit right-0">
         <div role="alert" class="alert shadow-lg animate-shake"
         :class="{
             'bg-white text-neutral-900' : status == 'none',

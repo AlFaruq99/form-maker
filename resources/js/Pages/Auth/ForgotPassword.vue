@@ -1,26 +1,3 @@
-<script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-defineProps({
-    status: {
-        type: String,
-    },
-});
-
-const form = useForm({
-    email: '',
-});
-
-const submit = () => {
-    form.post(route('password.email'));
-};
-</script>
-
 <template>
     <GuestLayout>
         <Head title="Forgot Password" />
@@ -51,6 +28,7 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
+            <p v-if="successSendEmail" class="text-primary">Check your email</p>
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Email Password Reset Link
@@ -59,3 +37,49 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<script>
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+export default {
+    components:{
+        GuestLayout,
+        InputError,
+        InputLabel,
+        PrimaryButton,
+        TextInput,
+        Head
+    },
+    props:{
+        status: {
+            type: String,
+        },
+    },
+    data() {
+        return {
+            form : useForm({
+                email: '',
+            }),
+            successSendEmail:false
+        }
+    },
+    methods: {
+        submit(){
+            this.form.post(route('resetPassword'),{
+                onFinish: () => {
+                    this.successSendEmail = true
+
+                    setTimeout(() => {
+                        this.successSendEmail = false
+                    }, 3000);
+                },
+            });
+        }
+    },
+}
+</script>

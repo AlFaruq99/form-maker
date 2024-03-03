@@ -32,13 +32,26 @@ use Inertia\Inertia;
 
 $prefixUser = ['panel','client','guest'];
 Route::get('logo',[WebConfigController::class,'getLogoPath'])->name('getLogoPath');
-Route::middleware('guest')->get('/', [DashboardController::class,'welcomePage']);
 Route::controller(AuthController::class)
 ->middleware('guest')
 ->group(function(){
+    Route::get('/','login');
     Route::get('login','login')->name('login');
     Route::get('register','register')->name('register');
     Route::post('authenticate','authenticate')->name('authenticate');
+    Route::post('register','registerProcess')->name('registerProcess');
+    Route::get('reset_password',function(){
+        return Inertia::render('Auth/ForgotPassword');
+    })
+    ->name('reset_password');
+    Route::post('resetPassword','resetPassword')->name('resetPassword');
+    Route::get('/reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->middleware('guest')->name('password.reset');
+    Route::get('password_reset_page',function(){
+        return Inertia::render('Auth/ResetPassword');
+    })->name('passwordResetPage');
+    Route::post('resetPasswordProcess','resetPasswordProcess')->name('resetPasswordProcess');
 });
 
 Route::post('logout',[AuthController::class,'logout'])->name('logout');
@@ -77,7 +90,6 @@ Route::prefix('panel')
         Route::post('activate','activate')->name('activate');
     });
 
-
     Route::prefix('invoice')
     ->name('invoice.')
     ->controller(InvoiceController::class)
@@ -91,9 +103,9 @@ Route::prefix('panel')
         Route::post('store','store')->name('store');
         
         Route::get('download/{invoice_id}','download')->name('download');
+        Route::get('preview/{invoice_id}','preview')->name('preview');
         Route::get('send_media','sendMedia')->name('sendMedia');
     });
-
 
     Route::prefix('whatsapp')
     ->name('whatsapp.')
@@ -102,6 +114,13 @@ Route::prefix('panel')
         Route::get('index','connectPageAdmin')->name('connectPageAdmin');
         Route::get('set_webhook','connectWhatsappSetWebhook')->name('setWebhook');
         Route::post('send_media',"sendMediaMessage")->name('sendMediaMessage');
+    });
+
+    Route::prefix('config')
+    ->name('config.')
+    ->controller(WebConfigController::class)
+    ->group(function(){
+        Route::post('update','update')->name('update');
     });
    
   
@@ -124,6 +143,7 @@ foreach ($prefixUser as $key => $prefix) {
         ->group(function(){
             Route::get('page/{id}','sendMailPage')->name('sendMailPage');
             Route::post('send_invoice','sendInvoice')->name('sendInvoice');
+            Route::post('register','register')->name('register');
         });
     });
 }
@@ -173,6 +193,7 @@ Route::prefix('client')
         Route::post('store','store')->name('store');
 
         Route::get('download/{invoice_id}','download')->name('download');
+        Route::get('preview/{invoice_id}','preview')->name('preview');
         Route::get('send_media','sendMedia')->name('sendMedia');
     });
     
