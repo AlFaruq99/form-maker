@@ -140,6 +140,7 @@ export default {
                         "Content-Type": "multipart/form-data",
                     },
                 });
+                
                 if (response.status == 200) {
                     successModal.showModal();
                     
@@ -152,14 +153,12 @@ export default {
                         responseSendWa = await this.sendResponseWaHandler(number);
                     }
                     
-                    if (responseSendWa != false) {
-                        setTimeout(() => {
-                            window.location.href = route('guest.responsePage',{
-                                'form_id' : this.Question.uuid
-                            });
-                            
-                        }, 3000);
-                    }
+                    setTimeout(() => {
+                        window.location.href = route('guest.responsePage',{
+                            'form_id' : this.Question.uuid
+                        });
+                        
+                    }, 1000);   
                 }
             }else{
                 this.errorResponse = filteredArray;
