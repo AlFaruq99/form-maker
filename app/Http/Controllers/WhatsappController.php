@@ -192,7 +192,10 @@ class WhatsappController extends Controller
                 ],500);
             }
         } catch (\Throwable $th) {
-            throw $th;
+            return response()
+            ->json([
+                "message" => 'Gagal mengirim pesan'
+            ],500);
         }
 
     }
