@@ -14,10 +14,33 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 export default {
     components:{Head},
     props:{
-        formulir:Array
+        formulir:Array,
+        answer:Array
+    },
+    data() {
+        return {
+            responseArray:[]
+        }
     },
     mounted() {
-        console.log(this.formulir)
+        
+        this.getVariableResponse(this.formulir.message,this.answer);
     },
+    methods: {
+        getVariableResponse(input, object) {
+            this.formulir.message = input.replace(/\[([^\]]+)\]/g, (_, match) => {
+
+                let answerVar = null
+                object.forEach(element => {
+                    if (element.kolom == match) {
+                        answerVar = element.answer
+                    }
+                });
+
+                return answerVar;
+            });
+        }
+
+    },  
 }
 </script>

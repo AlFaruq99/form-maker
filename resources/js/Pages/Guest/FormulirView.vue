@@ -142,6 +142,7 @@ export default {
                 });
                 
                 if (response.status == 200) {
+                    
                     successModal.showModal();
                     
                     const phoneNumberGuest = this.Question.content.filter((item) => {
@@ -155,6 +156,7 @@ export default {
                     
                     setTimeout(() => {
                         window.location.href = route('guest.responsePage',{
+                            'id' : response.data.id,
                             'form_id' : this.Question.uuid
                         });
                         

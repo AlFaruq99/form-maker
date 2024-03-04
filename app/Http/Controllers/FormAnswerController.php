@@ -31,10 +31,14 @@ class FormAnswerController extends Controller
 
 
     public function responsePage(Request $request){
+        // dd($request->all());
         $formulir = Formulir::where('uuid',$request->form_id)->first();
-        
+        $answerData = FormAnswer::find($request->id);
+        $answer = json_decode($answerData->answer);
+
         return Inertia::render('Guest/ResponsePage',[
-            'formulir' => $formulir
+            'formulir' => $formulir,
+            'answer' => $answer
         ]);
     }
 
@@ -58,12 +62,13 @@ class FormAnswerController extends Controller
                 }
             }
             $answerData = json_encode($data['content']);
-            FormAnswer::create([
+            $formAnswer = FormAnswer::create([
                 'formulir_id' => $data['formulir_id'],
                 'answer' => $answerData
             ]);
             return response()
             ->json([
+                'id' => $formAnswer->id,
                 'message' => 'Berhasil mengirim jawaban anda'
             ]);
         } catch (\Throwable $th) {
