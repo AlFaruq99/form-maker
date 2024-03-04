@@ -89,6 +89,9 @@ import axios from 'axios';
 import moment from 'moment';
 
 export default {
+    props:{
+        id:Number 
+    },
     components:{
         Head,AuthenticatedLayout,TableVue, Link
     },
@@ -112,7 +115,7 @@ export default {
             if (urlParam) {
                 url = urlParam
             }else{
-                url =route('client.form.responderList')
+                url =route('client.form.responderList',{id:this.id})
             }
 
             const response = await axios.get(

@@ -18,9 +18,9 @@
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink class="text-neutral-900 font-semibold text-xl space-x-2" :href="route('panel.dashboard')" :active="route().current('dashboard')">
+                                <NavLink class="text-neutral-900 font-semibold text-xl space-x-2" :href="route('client.dashboard')" :active="route().current('dashboard')">
                                     <img class="w-10 mr-2" src="/storage/webLogo.png" alt="">
-                                    <span>Form Generator</span>
+                                    <span>{{ appName }}</span>
                                 </NavLink>
                             </div>
                         </div>
@@ -224,6 +224,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import Toast from '@/Components/Toast.vue';
+import axios from 'axios';
 
 export default {
     components:{
@@ -237,9 +238,11 @@ export default {
     data() {
         return {
             showingNavigationDropdown: false,
-            errors:null
+            errors:null,
+            appName:null
         }
     },
+    
     watch: {
         errors: {
             handler(newVal, oldVal) {
@@ -262,8 +265,19 @@ export default {
                 }
             }, 6000);
         }
+        this.getWebNameHandler()
     },
-    
+    methods: {
+        async getWebNameHandler(){
+            const response = await axios.get(route('getWebName'))
+            .then((result) => {
+                return result
+            }).catch((err) => {
+                
+            });
+            this.appName = response.data
+        }
+    },
     
 }
 </script>

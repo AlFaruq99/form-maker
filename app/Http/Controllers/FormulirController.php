@@ -121,19 +121,26 @@ class FormulirController extends Controller
         }
     }
 
-    public function responderPage(){
-        return Inertia::render('Client/Formulir/Responder');
+    public function responderPage($id){
+        return Inertia::render('Client/Formulir/Responder',
+            [
+                'id' => $id
+            ]
+        );
     }
 
-    public function responderList(Request $request){
+    public function responderList(Request $request,$id){
         try {
+           
             $length = $request->length;
             $user = Auth::user();
+            
             if (!isset($user)) {
                 abort(404);
             }
 
             $formulir = Formulir::where('user_id',$user->id)
+            ->where('id',$id)
             ->first();
 
             $answerData = FormAnswer::where('formulir_id',$formulir->id)

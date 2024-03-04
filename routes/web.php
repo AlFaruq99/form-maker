@@ -31,7 +31,12 @@ use Inertia\Inertia;
 */
 
 $prefixUser = ['panel','client','guest'];
-Route::get('logo',[WebConfigController::class,'getLogoPath'])->name('getLogoPath');
+
+
+// web config
+Route::get('web_name',[WebConfigController::class,'getWebName'])->name('getWebName');
+
+// auth
 Route::controller(AuthController::class)
 ->middleware('guest')
 ->group(function(){
@@ -163,8 +168,8 @@ Route::prefix('client')
         Route::get('create_form','CreateForm')->name('CreateForm');
         Route::get('formulir_data','FormulirData')->name('FormulirData');
         Route::get('view_form/{form_id}','ViewForm')->name('ViewForm');
-        Route::get('responder_page','responderPage')->name('responderPage');
-        Route::get('responder_list','responderList')->name('responderList');
+        Route::get('responder_page/{id}','responderPage')->name('responderPage');
+        Route::get('responder_list/{id}','responderList')->name('responderList');
         Route::post('create','Create')->name('create');
         Route::delete('delete/{form_id}','delete')->name('delete');
         Route::get('export_excel','exportExcel')->name('exportExcel');

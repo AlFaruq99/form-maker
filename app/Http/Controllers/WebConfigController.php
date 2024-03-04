@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Service\EnvService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WebConfigController extends Controller
 {
@@ -16,10 +17,19 @@ class WebConfigController extends Controller
             }
 
             if ($request->name != null) {
-                EnvService::set('APP_NAME',"$request->name");
+                DB::table('web_config')
+                ->insert([
+                    'web_name' => $request->name
+                ]);
             }
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function getWebName(){
+        $webName = DB::table('web_config')
+        ->first();
+        return $webName->web_name??'Form Maker';
     }
 }
