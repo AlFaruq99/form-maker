@@ -1,0 +1,1 @@
+import{_ as s}from"./_plugin-vue_export-helper-x3n3nnut.js";import{o as t,c as a,b as r,s as o}from"./app-iyDdm6PS.js";const c={},n={class:"overflow-x-auto"},l={class:"table table-zebra"};function _(e,d,p,i,b,f){return t(),a("div",n,[r("table",l,[o(e.$slots,"header"),o(e.$slots,"body")])])}const u=s(c,[["render",_]]);export{u as T};

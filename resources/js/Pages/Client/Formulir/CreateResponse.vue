@@ -1,16 +1,16 @@
 <template>
-    <div>
+    <div class="space-y-6">
         <div class="grid grid-flow-row grid-cols-6 gap-2">
             <button 
             @click="selectVarHandler(index)"
-            class="btn"
+            class="btn btn-outline btn-primary"
             v-for="(item, index) in content" :key="index">
                 {{ item.kolom }}
             </button>
         </div>
-        <textarea v-model="response" class="textarea textarea-bordered w-full" id="" cols="30" rows="10">
-
-        </textarea>
+       <div>
+        <textarea v-model="response" class="textarea textarea-bordered w-full" id="" cols="30" rows="10"></textarea>
+       </div>
     </div>
 </template>
 
