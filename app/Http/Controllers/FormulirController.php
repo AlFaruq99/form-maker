@@ -65,8 +65,9 @@ class FormulirController extends Controller
             $filename = 'default_background.jpg';
             if ($request->hasFile('image_background')) {
                 $file = $data['image_background'];
-                $moveFile = Storage::put('public/image/form',$file);
-                $filename = basename($moveFile);
+                
+                $file->move(public_path('storage/image/form/'),$file->getClientOriginalName());
+                $filename = $file->getClientOriginalName();
             }
 
             Formulir::create([
