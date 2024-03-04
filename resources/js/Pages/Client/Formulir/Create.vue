@@ -16,14 +16,16 @@
                     </ul>
 
                     <!-- create form column -->
-                    <CreateForm v-if="page == 0" @content-change="(item) => { content = item }"></CreateForm>
+                    <CreateForm v-if="page == 0" 
+                    @change-background="(item) => {imageChangeHandler(item)}"
+                    @change-description="(item) => {description = item}"
+                    @content-change="(item) => { content = item }"></CreateForm>
 
 
                     <!-- create response form -->
                     <CreateResponse 
                     :content="content"
                     @response-change="(value)=>{
-                        console.log(value)
                         this.response = value
                     }"
                     v-if="page == 1"
@@ -89,10 +91,22 @@ export default {
                 'background': `url(${this.defaultImage})`,
                 'background-size': 'cover'
             },
-            imageFile: null
+            imageFile: null,
+            description:''
         }
     },
     methods: {
+        imageChangeHandler(event){
+            const file = event.target.files[0];
+            this.imageFile = file;
+            const reader = new FileReader();
+            var background = this.backgroundStyle;
+            reader.onload = function(e) {
+                background.background = `url(${e.target.result})`;
+                // previewImage.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        },
         async simpanHandler() {
 
             try {

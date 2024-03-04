@@ -27,7 +27,6 @@ export default {
     watch: {
         response:{
             handler:function(newVal){
-                console.log(newVal)
                 this.changeResponseHandler(newVal)
             },
             deep:true

@@ -100,10 +100,14 @@ export default {
     },
     data() {
         return {
-            content:[]
+            content:[],
+            description:''
         }
     },
     watch: {
+        description(newVal){
+            this.$emit('change-description',newVal)
+        },
         content:{
             handler:function(newVal){
                 this.changeContentValHandler(newVal)
@@ -128,15 +132,7 @@ export default {
             }   
         },
         imageChangeHandler(event){
-            const file = event.target.files[0];
-            this.imageFile = file;
-            const reader = new FileReader();
-            var background = this.backgroundStyle;
-            reader.onload = function(e) {
-                background.background = `url(${e.target.result})`;
-                // previewImage.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
+            this.$emit('change-background',event)
         },
         changeContentValHandler(item){
             this.$emit('content-change',item);
